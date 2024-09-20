@@ -6,7 +6,7 @@ import Login from "./components/Login.jsx";
 import BookList from "./components/BookList.jsx";
 import UploadNotes from "./components/UploadNotes.jsx";
 import UploadListing from "./components/UploadListing.jsx";
-import Rooms from "./components/Rooms.jsx";
+// import Rooms from "./components/Rooms.jsx";
 import AddAssignmentForm from "./components/AddAssignmentForm.jsx";
 import AssignmentSubmission from "./components/AssignmentSubmission.jsx";
 import BorrowedBooksPage from "./components/BorrowedBooksPage.jsx";
@@ -18,24 +18,6 @@ import PlagiarismChecker from "./components/PlagiarismChecker.jsx";
 import Skills from "./components/Skills.jsx";
 import TeacherAssignmentView from "./components/TeacherAssignmentView.jsx";
 
-<<<<<<< HEAD
-// Import your components
-import AddAssignmentForm from "./components/AddAssignmentForm";
-import AssignmentSubmission from "./components/AssignmentSubmission";
-import BorrowedBooksPage from "./components/BorrowedBooksPage";
-import Calendar from "./components/Calendar";
-import CodingPlatform from "./components/CodingPlatform";
-import ExamScheduler from "./components/ExamScheduler";
-import Login from "./components/Login";
-import Notes from "./components/Notes";
-import PlagiarismChecker from "./components/PlagiarismChecker";
-import Skills from "./components/Skills";
-import TeacherAssignmentView from "./components/TeacherAssignmentView";
-import Test from "./components/test";
-import { BookList } from "./components/BookList";
-import Profile from "./Pages/Profile";
-import DashboardPage from "./Pages/Dashboard";
-=======
 // Error Boundary Component
 class ErrorBoundary extends React.Component {
   constructor(props) {
@@ -59,25 +41,16 @@ class ErrorBoundary extends React.Component {
     return this.props.children; 
   }
 }
->>>>>>> 98fe10f0ccaa88b2b1347778b5a2d42537a70451
 
 function App() {
   return (
     <Router>
       <ErrorBoundary>
         <Routes>
-<<<<<<< HEAD
-          <Route path ="/" element={<Login />} />
-          <Route path ="/dashboard" element={<DashboardPage />} />
-          <Route path ="/profile" element={<Profile />} />
-          <Route path ="/add-assignment" element={<AddAssignmentForm />} />
-          <Route path ="/assignment-submission" element={<AssignmentSubmission />} />
-=======
           <Route path="/" element={<Login />} />
-          <Route path="/resume-upload" element={<ResumeUpload />} />
+          {/* <Route path="/resume-upload" element={< />} /> */}
           <Route path="/add-assignment" element={<AddAssignmentForm />} />
           <Route path="/assignment-submission" element={<AssignmentSubmission />} />
->>>>>>> 98fe10f0ccaa88b2b1347778b5a2d42537a70451
           <Route path="/book-list" element={<BookList />} />
           <Route path="/borrowed-books" element={<BorrowedBooksPage />} />
           <Route path="/calendar" element={<Calendar />} />
