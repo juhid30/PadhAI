@@ -14,6 +14,8 @@ import Skills from "./components/Skills";
 import TeacherAssignmentView from "./components/TeacherAssignmentView";
 import Test from "./components/test";
 import { BookList } from "./components/BookList";
+import UploadNotes from "./components/UploadNotes";
+import UploadListing from "./components/UploadListing";
 
 function App() {
   return (
@@ -33,6 +35,9 @@ function App() {
           <Route path="/skills" element={<Skills />} />
           <Route path="/teacher-assignment-view" element={<TeacherAssignmentView />} />
           <Route path="/test" element={<Test />} />
+          <Route path="/upload-notes" element={<UploadNotes />} />
+          <Route path="/upload-listing" element={<UploadListing />} />
+
         </Routes>
       </div>
     </Router>

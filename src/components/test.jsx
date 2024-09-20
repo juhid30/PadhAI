@@ -11,10 +11,6 @@ import Notes from "./Notes";
 
 import CodingPlatform from "./CodingPlatform";
 import PlagiarismChecker from "./PlagiarismChecker";
-import AddAssignmentForm from "./AddAssignmentForm"
-import AssignmentSubmission from "./AssignmentSubmission"
-import TeacherAssignmentView from "./TeacherAssignmentView"
-
 
 const Test = () => {
   const studentId = "library-test-student"; // Replace with actual student ID
@@ -22,11 +18,7 @@ const Test = () => {
   return (
     <>
       <VideoPlayer />
-      {/* <UploadListing /> */}
-      {/* <ExamScheduler /> */}
-      {/* <TeacherAssignmentView teacherId={teacherId} /> */}
-      {/* <AssignmentSubmission studentId={studentId} /> */}
-      {/* <AddAssignmentForm studentId={studentId} /> */}
+
     </>
   );
 };

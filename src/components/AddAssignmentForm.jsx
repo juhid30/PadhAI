@@ -58,66 +58,80 @@ const AddAssignmentForm = () => {
   };
 
   return (
-    <form
-      className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-lg"
-      onSubmit={handleSubmit}
-    >
-      <h2 className="text-2xl font-semibold text-center mb-4">Add Assignment</h2>
-
-      <input
-        type="text"
-        value={subject}
-        onChange={(e) => setSubject(e.target.value)}
-        placeholder="Subject"
-        required
-        className="w-full p-3 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-      />
-
-      <input
-        type="text"
-        value={assignmentTopic}
-        onChange={(e) => setAssignmentTopic(e.target.value)}
-        placeholder="Assignment Topic"
-        required
-        className="w-full p-3 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-      />
-
-      <input
-        type="date"
-        value={dueDate}
-        onChange={(e) => setDueDate(e.target.value)}
-        required
-        className="w-full p-3 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-      />
-
-      <input
-        type="file"
-        onChange={handleFileChange}
-        className="w-full mb-4 text-gray-700"
-      />
-
-      <select
-        value={year}
-        onChange={(e) => setYear(e.target.value)}
-        required
-        className="w-full p-3 mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+    <div className="flex items-center justify-center min-h-screen">
+      <form
+        className="bg-white w-full max-w-md rounded-3xl shadow-lg p-8"
+        onSubmit={handleSubmit}
       >
-        <option value="" disabled>
-          Select Year
-        </option>
-        <option value={1}>1</option>
-        <option value={2}>2</option>
-        <option value={3}>3</option>
-        <option value={4}>4</option>
-      </select>
+        <h2 className="text-2xl font-semibold text-center text-indigo-700 mb-6">
+          Add Assignment
+        </h2>
 
-      <button
-        type="submit"
-        className="w-full p-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-200"
-      >
-        Add Assignment
-      </button>
-    </form>
+        <input
+          type="text"
+          value={subject}
+          onChange={(e) => setSubject(e.target.value)}
+          placeholder="Subject"
+          required
+          className="w-full p-4 mb-4 text-indigo-600 border border-indigo-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400"
+        />
+
+        <input
+          type="text"
+          value={assignmentTopic}
+          onChange={(e) => setAssignmentTopic(e.target.value)}
+          placeholder="Assignment Topic"
+          required
+          className="w-full p-4 mb-4 text-indigo-600 border border-indigo-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400"
+        />
+
+        <input
+          type="date"
+          value={dueDate}
+          onChange={(e) => setDueDate(e.target.value)}
+          required
+          className="w-full p-4 mb-4 text-indigo-600 border border-indigo-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400"
+        />
+
+        {/* Enhanced Custom File Upload Button */}
+        <div className="mb-4">
+          <label
+            className="w-full p-4 flex items-center justify-center bg-indigo-100 text-indigo-700 border border-indigo-300 rounded-lg cursor-pointer hover:bg-indigo-200 hover:text-indigo-900 transition-all duration-200"
+            htmlFor="file-upload"
+          >
+            {file ? file.name : "Upload File"}
+          </label>
+          <input
+            type="file"
+            id="file-upload"
+            onChange={handleFileChange}
+            className="hidden"
+          />
+        </div>
+
+        <select
+          value={year}
+          onChange={(e) => setYear(e.target.value)}
+          required
+          className="w-full p-4 mb-6 text-indigo-600 border border-indigo-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400"
+        >
+          <option value="" disabled>
+            Select Year
+          </option>
+          <option value={1}>1</option>
+          <option value={2}>2</option>
+          <option value={3}>3</option>
+          <option value={4}>4</option>
+        </select>
+
+        <button
+          type="submit"
+          className="w-full p-4 bg-indigo-400 text-white rounded-lg hover:bg-indigo-500 transition duration-200"
+        >
+          Add Assignment
+        </button>
+      </form>
+    </div>
   );
 };
 
