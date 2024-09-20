@@ -1,7 +1,6 @@
 import React, { useState } from "react";
-// import { ToastContainer, toast, Bounce } from "react-toastify";
 import { db } from "../../firebase";
-import { collection, addDoc } from "firebase/firestore"; // Firestore functions
+import { collection, addDoc } from "firebase/firestore";
 
 const ExamScheduler = () => {
   const [title, setTitle] = useState("");
@@ -11,15 +10,6 @@ const ExamScheduler = () => {
   const [endTime, setEndTime] = useState("");
   const [allDay, setAllDay] = useState(false);
   const [year, setYear] = useState("");
-
-  // Handlers for input changes
-  const handleTitleChange = (e) => setTitle(e.target.value);
-  const handleStartChange = (e) => setStart(e.target.value);
-  const handleStartTimeChange = (e) => setStartTime(e.target.value);
-  const handleEndChange = (e) => setEnd(e.target.value);
-  const handleEndTimeChange = (e) => setEndTime(e.target.value);
-  const handleAllDayChange = (e) => setAllDay(e.target.checked);
-  const handleYearChange = (e) => setYear(e.target.value);
 
   // Firebase API call
   const addTestToFirebase = async (testData) => {
@@ -51,158 +41,97 @@ const ExamScheduler = () => {
   };
 
   return (
-    <>
-      <div className="w-full lg:w-[83%] mx-auto flex flex-col bg-white shadow-md rounded-lg p-6">
-        {/* Title Section */}
-        <div className="flex items-center justify-center border-b-2 mb-8">
-          <h2 className="text-3xl font-semibold text-gray-800">
-            Schedule a Test
-          </h2>
+    <div className="flex items-center justify-center min-h-screen">
+      <form
+        className="bg-white w-full max-w-md rounded-3xl shadow-lg p-8"
+        onSubmit={handleSubmit}
+      >
+        <h2 className="text-2xl font-semibold text-center text-blue-700 mb-6">
+          Schedule a Test
+        </h2>
+
+        <input
+          type="text"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          placeholder="Test Title"
+          required
+          className="w-full p-4 mb-4 text-blue-600 border border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+        />
+
+        <select
+          value={year}
+          onChange={(e) => setYear(e.target.value)}
+          required
+          className="w-full p-4 mb-4 text-blue-600 border border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+        >
+          <option value="" disabled>
+            Select Year
+          </option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+        </select>
+
+        <input
+          type="date"
+          value={start}
+          onChange={(e) => setStart(e.target.value)}
+          required
+          className="w-full p-4 mb-4 text-blue-600 border border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+        />
+
+        <input
+          type="time"
+          value={startTime}
+          onChange={(e) => setStartTime(e.target.value)}
+          required
+          className="w-full p-4 mb-4 text-blue-600 border border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+        />
+
+        <input
+          type="date"
+          value={end}
+          onChange={(e) => setEnd(e.target.value)}
+          required
+          className="w-full p-4 mb-4 text-blue-600 border border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+        />
+
+        <input
+          type="time"
+          value={endTime}
+          onChange={(e) => setEndTime(e.target.value)}
+          required
+          className="w-full p-4 mb-4 text-blue-600 border border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+        />
+
+        <div className="flex items-center mt-4">
+          <input
+            type="checkbox"
+            id="all-day"
+            checked={allDay}
+            onChange={(e) => setAllDay(e.target.checked)}
+            className="h-5 w-5 text-blue-600 focus:ring focus:ring-blue-300 rounded"
+          />
+          <label
+            htmlFor="all-day"
+            className="ml-2 text-lg font-medium text-gray-700"
+          >
+            All Day Event
+          </label>
         </div>
 
-        {/* Form Section */}
-        <form
-          className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-6"
-          onSubmit={handleSubmit}
-        >
-          {/* Title Input */}
-          <div className="flex flex-col">
-            <label
-              htmlFor="title"
-              className="text-lg font-medium text-gray-700"
-            >
-              Test Title:
-            </label>
-            <input
-              type="text"
-              id="title"
-              value={title}
-              onChange={handleTitleChange}
-              placeholder="Enter Test Title"
-              className="mt-2 p-2 border rounded-md shadow-sm focus:outline-none focus:ring focus:ring-green-300"
-              required
-            />
-          </div>
-
-          {/* Year Selection */}
-          <div className="flex flex-col">
-            <label htmlFor="year" className="text-lg font-medium text-gray-700">
-              Select Year:
-            </label>
-            <select
-              id="year"
-              value={year}
-              onChange={handleYearChange}
-              className="mt-2 p-2 border rounded-md shadow-sm focus:outline-none focus:ring focus:ring-green-300"
-              required
-            >
-              <option value="">Select Year</option>
-              <option value="FE">FE</option>
-              <option value="SE">SE</option>
-              <option value="TE">TE</option>
-              <option value="BE">BE</option>
-            </select>
-          </div>
-
-          {/* Start Date Input */}
-          <div className="flex flex-col">
-            <label
-              htmlFor="start"
-              className="text-lg font-medium text-gray-700"
-            >
-              Start Date:
-            </label>
-            <input
-              type="date"
-              id="start"
-              value={start}
-              onChange={handleStartChange}
-              className="mt-2 p-2 border rounded-md shadow-sm focus:outline-none focus:ring focus:ring-green-300"
-              required
-            />
-          </div>
-
-          {/* Start Time Input */}
-          <div className="flex flex-col">
-            <label
-              htmlFor="start-time"
-              className="text-lg font-medium text-gray-700"
-            >
-              Start Time:
-            </label>
-            <input
-              type="time"
-              id="start-time"
-              value={startTime}
-              onChange={handleStartTimeChange}
-              className="mt-2 p-2 border rounded-md shadow-sm focus:outline-none focus:ring focus:ring-green-300"
-              required
-            />
-          </div>
-
-          {/* End Date Input */}
-          <div className="flex flex-col">
-            <label htmlFor="end" className="text-lg font-medium text-gray-700">
-              End Date:
-            </label>
-            <input
-              type="date"
-              id="end"
-              value={end}
-              onChange={handleEndChange}
-              className="mt-2 p-2 border rounded-md shadow-sm focus:outline-none focus:ring focus:ring-green-300"
-              required
-            />
-          </div>
-
-          {/* End Time Input */}
-          <div className="flex flex-col">
-            <label
-              htmlFor="end-time"
-              className="text-lg font-medium text-gray-700"
-            >
-              End Time:
-            </label>
-            <input
-              type="time"
-              id="end-time"
-              value={endTime}
-              onChange={handleEndTimeChange}
-              className="mt-2 p-2 border rounded-md shadow-sm focus:outline-none focus:ring focus:ring-green-300"
-              required
-            />
-          </div>
-
-          {/* All Day Checkbox */}
-          <div className="flex items-center mt-4">
-            <input
-              type="checkbox"
-              id="all-day"
-              checked={allDay}
-              onChange={handleAllDayChange}
-              className="h-5 w-5 text-green-600 focus:ring focus:ring-green-300 rounded"
-            />
-            <label
-              htmlFor="all-day"
-              className="ml-2 text-lg font-medium text-gray-700"
-            >
-              All Day Event
-            </label>
-          </div>
-        </form>
-
-        {/* Submit Button */}
         <div className="flex justify-center mt-8">
           <button
             type="submit"
-            className="bg-green-700 text-white py-3 px-6 rounded-md text-lg font-semibold shadow-lg hover:bg-green-800 transition-all duration-300"
-            onClick={handleSubmit}
+            className="w-full p-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-200"
           >
             Submit
           </button>
         </div>
-      </div>
-    </>
+      </form>
+    </div>
   );
 };
 

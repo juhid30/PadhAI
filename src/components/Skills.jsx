@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { topics } from '../assets/quizData';
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import { topics } from "../assets/quizData";
 
 const Skill = ({ name, x, y, onClick, isClicked }) => {
   return (
     <motion.div
       className={`flex items-center justify-center rounded-full font-semibold py-3 px-6 shadow-dark cursor-pointer absolute
         lg:py-2 lg:px-4 md:text-sm md:py-1.5 md:px-3 xs:bg-transparent xs:text-dark xs:font-bold
-        ${isClicked ? 'bg-green-500 text-light' : 'bg-red-500 text-light'}`}
+        ${isClicked ? "bg-green-500 text-light" : "bg-red-500 text-light"}`}
       whileHover={{ scale: 1.05 }}
       initial={{ x: 0, y: 0 }}
       whileInView={{ x: x, y: y }}
@@ -70,17 +70,23 @@ const Skills = () => {
   };
 
   const handlePreviousTopic = () => {
-    setCurrentTopicIndex((prevIndex) => (prevIndex - 1 + topics.length) % topics.length);
+    setCurrentTopicIndex(
+      (prevIndex) => (prevIndex - 1 + topics.length) % topics.length
+    );
   };
 
   return (
     <>
-      <h2 className='font-bold text-8xl mt-64 w-full text-center md:text-6xl md:mt-32'>{currentTopic.name}</h2>
-      <div className='w-full h-screen relative flex items-center justify-center rounded-full bg-circularLight  lg:bg-circularLightLg  lg:h-[80vh] sm:h-[60vh] xs:h-[50vh]
+      <h2 className="font-bold text-8xl mt-64 w-full text-center md:text-6xl md:mt-32">
+        {currentTopic.name}
+      </h2>
+      <div
+        className="w-full h-screen relative flex items-center justify-center rounded-full bg-circularLight  lg:bg-circularLightLg  lg:h-[80vh] sm:h-[60vh] xs:h-[50vh]
         md:bg-circularLightMd 
-        sm:bg-circularLightSm'>
+        sm:bg-circularLightSm"
+      >
         <motion.div
-          className='flex items-center justify-center rounded-full font-semibold bg-dark text-light p-8 shadow-dark cursor-pointer lg:p-6 md:p-4 xs:text-xs xs:p-2'
+          className="flex items-center justify-center rounded-full font-semibold bg-dark text-light p-8 shadow-dark cursor-pointer lg:p-6 md:p-4 xs:text-xs xs:p-2"
           whileHover={{ scale: 1.05 }}
         >
           {currentTopic.name}
@@ -99,13 +105,17 @@ const Skills = () => {
 
         {/* Modal */}
         {isModalOpen && selectedSkill && (
-          <div className='fixed inset-0 bg-gray-900 bg-opacity-40 flex justify-center items-center'>
-            <div className='bg-white p-8 rounded-xl shadow-lg max-w-lg w-full relative'>
+          <div className="fixed inset-0 bg-gray-900 bg-opacity-40 flex justify-center items-center">
+            <div className="bg-white p-8 rounded-xl shadow-lg max-w-lg w-full relative">
               {/* Quiz Title */}
-              <h2 className='text-2xl font-semibold mb-6 text-center'>{selectedSkill.name} Quiz</h2>
+              <h2 className="text-2xl font-semibold mb-6 text-center">
+                {selectedSkill.name} Quiz
+              </h2>
 
               {quizCompleted ? (
-                <p className="text-green-600 font-bold text-center">Quiz completed! This skill is now marked as completed.</p>
+                <p className="text-green-600 font-bold text-center">
+                  Quiz completed! This skill is now marked as completed.
+                </p>
               ) : (
                 <>
                   {/* Question */}
@@ -114,22 +124,27 @@ const Skills = () => {
                   </p>
 
                   {/* Options */}
-                  <div className='mt-4'>
-                    {selectedSkill.quiz[quizIndex].options.map((option, idx) => (
-                      <button
-                        key={idx}
-                        onClick={() => handleQuizAnswer(option)}
-                        className={`block py-2 px-4 mb-2 w-full rounded-lg text-left font-semibold 
-                          ${selectedOption === option && option === selectedSkill.quiz[quizIndex].answer
-                            ? 'bg-green-500 text-white' // Correct answer
-                            : selectedOption === option
-                            ? 'bg-red-500 text-white' // Wrong answer
-                            : 'bg-gray-200 text-gray-900'} // Default state
+                  <div className="mt-4">
+                    {selectedSkill.quiz[quizIndex].options.map(
+                      (option, idx) => (
+                        <button
+                          key={idx}
+                          onClick={() => handleQuizAnswer(option)}
+                          className={`block py-2 px-4 mb-2 w-full rounded-lg text-left font-semibold 
+                          ${
+                            selectedOption === option &&
+                            option === selectedSkill.quiz[quizIndex].answer
+                              ? "bg-green-500 text-white" // Correct answer
+                              : selectedOption === option
+                              ? "bg-red-500 text-white" // Wrong answer
+                              : "bg-gray-200 text-gray-900"
+                          } // Default state
                           transition duration-300`}
-                      >
-                        {option}
-                      </button>
-                    ))}
+                        >
+                          {option}
+                        </button>
+                      )
+                    )}
                   </div>
                 </>
               )}
@@ -137,7 +152,7 @@ const Skills = () => {
               {/* Buttons */}
               <div className="flex justify-between items-center mt-8">
                 <button
-                  className='py-2 px-6 bg-red-500 text-white rounded-lg font-semibold hover:bg-red-600 transition duration-300'
+                  className="py-2 px-6 bg-red-500 text-white rounded-lg font-semibold hover:bg-red-600 transition duration-300"
                   onClick={handleCloseModal}
                 >
                   Close
@@ -145,7 +160,11 @@ const Skills = () => {
                 {!quizCompleted && (
                   <button
                     className={`py-2 px-6 rounded-lg font-semibold transition duration-300
-                      ${selectedOption === null ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-500 text-white hover:bg-blue-600'}
+                      ${
+                        selectedOption === null
+                          ? "bg-gray-400 cursor-not-allowed"
+                          : "bg-blue-500 text-white hover:bg-blue-600"
+                      }
                     `}
                     onClick={handleNextQuestion}
                     disabled={selectedOption === null} // Disable Next button if no option selected
@@ -160,11 +179,17 @@ const Skills = () => {
       </div>
 
       {/* Navigation Buttons */}
-      <div className='flex justify-center mt-8'>
-        <button className='mx-4 py-2 px-6 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-300' onClick={handlePreviousTopic}>
+      <div className="flex justify-center mt-8">
+        <button
+          className="mx-4 py-2 px-6 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-300"
+          onClick={handlePreviousTopic}
+        >
           Previous
         </button>
-        <button className='mx-4 py-2 px-6 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-300' onClick={handleNextTopic}>
+        <button
+          className="mx-4 py-2 px-6 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-300"
+          onClick={handleNextTopic}
+        >
           Next
         </button>
       </div>
