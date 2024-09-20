@@ -8,6 +8,7 @@ import ExamScheduler from "./ExamScheduler";
 import UploadListing from "./UploadListing";
 import VideoPlayer from "./VideoPlayer";
 import Notes from "./Notes";
+
 import CodingPlatform from "./CodingPlatform";
 import PlagiarismChecker from "./PlagiarismChecker";
 import AddAssignmentForm from "./AddAssignmentForm"
