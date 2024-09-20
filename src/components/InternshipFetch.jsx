@@ -112,6 +112,7 @@ const InternshipFetch = () => {
     if (!resumeFile) {
       alert('Please upload a resume before submitting.');
       return;
+      
     }
 
     setIsSubmitting(true);
