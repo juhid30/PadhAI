@@ -23,9 +23,12 @@ const PlagiarismChecker = () => {
 
     // Call your backend to check plagiarism using the fileUrl
     try {
-      const response = await axios.post("http://localhost:5000/check-plag", {
-        fileUrl,
-      });
+      const response = await axios.post(
+        "http://localhost:5000/check_plagiarism",
+        {
+          fileUrl,
+        }
+      );
       setResult(response.data);
     } catch (error) {
       console.error("Error checking plagiarism:", error);

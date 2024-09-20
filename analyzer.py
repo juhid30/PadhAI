@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify
 import fitz  # PyMuPDF
+import requests
 from PIL import Image
 import base64
 import io
@@ -8,9 +9,13 @@ import json
 from flask_cors import CORS
 app = Flask(__name__)
 
-CORS(app, resources={r"/*": {"origins": "http://localhost:5173"}})
+CORS(app, resources={r"/*": {"origins": "*"}})
 
 genai.configure(api_key="AIzaSyCVOV_MuOdKNFYVTQOzjtjpSDqL73FspW8")
+
+COPYLEAKS_EMAIL = 'test.juhid30@example.com'  # Replace with your Copyleaks account email
+COPYLEAKS_API_KEY = 'a67ab3ee-6d33-4824-9b02-b0376edd5a43'          # Replace with your Copyleaks API key
+COPYLEAKS_API_URL = 'https://api.copyleaks.com/v3/'
 
 def input_pdf_setup(file_content):
     pdf_document = fitz.open(stream=file_content, filetype="pdf")
@@ -273,7 +278,9 @@ prompt_for_details = """
             "contact_no": "Contact number extracted from resume"
         }
     }
+
 """
+
 
 @app.route('/upload', methods=['POST'])
 def upload_file():
@@ -339,6 +346,48 @@ def compare():
 
     # Return the cleaned and parsed response from the AI
     return jsonify({"response": clean_json_string(response)})
+
+@app.route('/check_plagiarism', methods=['POST'])
+def check_plagiarism():
+    data = request.json
+    if 'fileUrl' not in data:
+        return jsonify({'error': 'fileUrl is required'}), 400
+
+    file_url = data['fileUrl']
+
+    # Step 1: Authenticate and get access token
+    auth_response = requests.post(
+        f"{COPYLEAKS_API_URL}account/login",
+        json={'email': COPYLEAKS_EMAIL, 'apikey': COPYLEAKS_API_KEY}
+    )
+    
+    if auth_response.status_code != 200:
+        return jsonify({'error': 'Authentication failed'}), 401
+
+    access_token = auth_response.json().get('access_token')
+
+    # Step 2: Submit the document for plagiarism checking
+    submission_response = requests.post(
+        f"{COPYLEAKS_API_URL}process/submit/file/url",
+        headers={'Authorization': f'Bearer {access_token}'},
+        json={'url': file_url, 'filename': 'document.txt'}
+    )
+
+    if submission_response.status_code != 200:
+        return jsonify({'error': 'Submission failed', 'details': submission_response.json()}), 400
+
+    job_id = submission_response.json().get('id')
+
+    # Step 3: Check the status of the submission
+    status_response = requests.get(
+        f"{COPYLEAKS_API_URL}process/check/status/{job_id}",
+        headers={'Authorization': f'Bearer {access_token}'}
+    )
+
+    if status_response.status_code != 200:
+        return jsonify({'error': 'Failed to get status', 'details': status_response.json()}), 400
+
+    return jsonify(status_response.json())
 
 
 if __name__ == '__main__':
