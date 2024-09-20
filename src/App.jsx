@@ -8,8 +8,7 @@ function App() {
   return (
     <>
       <div className="">
-        uyfujg
-        <Test />{" "}
+        <Test />
       </div>
     </>
   );
