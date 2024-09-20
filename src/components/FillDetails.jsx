@@ -1,17 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
 const FillDetails = () => {
-  const [name, setName] = useState('');
-  const [phone, setPhone] = useState('');
-  const [linkedin, setLinkedin] = useState('');
-  const [error, setError] = useState('');
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [linkedin, setLinkedin] = useState("");
+  const [error, setError] = useState("");
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
     // Check if all fields are filled
     if (!name || !phone || !linkedin) {
-      setError('All fields are compulsory!');
+      setError("All fields are compulsory!");
       return;
     }
 
@@ -57,7 +57,10 @@ const FillDetails = () => {
         />
       </div>
 
-      <button type="submit" className="mt-4 px-4 py-2 bg-blue-500 text-white rounded">
+      <button
+        type="submit"
+        className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
+      >
         Submit
       </button>
     </form>

@@ -1,15 +1,15 @@
-import React, { useEffect, useState } from 'react';
-import { db } from '../../firebase';
-import { collection, getDocs } from 'firebase/firestore';
+import React, { useEffect, useState } from "react";
+import { db } from "../../firebase";
+import { collection, getDocs } from "firebase/firestore";
 
 const Notes = () => {
   const [notes, setNotes] = useState([]);
 
   useEffect(() => {
     const fetchNotes = async () => {
-      const notesCollection = collection(db, 'Notes');
+      const notesCollection = collection(db, "Notes");
       const notesSnapshot = await getDocs(notesCollection);
-      const notesData = notesSnapshot.docs.map(doc => ({
+      const notesData = notesSnapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
       }));
@@ -19,7 +19,7 @@ const Notes = () => {
   }, []);
 
   const handleViewDocument = (docURL) => {
-    window.open(docURL, '_blank');
+    window.open(docURL, "_blank");
   };
 
   return (
@@ -29,14 +29,22 @@ const Notes = () => {
         <table className="min-w-full shadow-md">
           <thead className="bg-[#3e8efe]">
             <tr className="border-b">
-              <th className="py-4 font-bold px-5 text-left text-gray-700 rounded-tl-lg">Subject</th>
-              <th className="py-4 font-bold px-5 text-left text-gray-700">Topic</th>
-              <th className="py-4 font-bold px-5 text-left text-gray-700">Accuracy</th>
-              <th className="py-4 font-bold px-5 text-left text-gray-700 rounded-tr-lg">Action</th>
+              <th className="py-4 font-bold px-5 text-left text-gray-700 rounded-tl-lg">
+                Subject
+              </th>
+              <th className="py-4 font-bold px-5 text-left text-gray-700">
+                Topic
+              </th>
+              <th className="py-4 font-bold px-5 text-left text-gray-700">
+                Accuracy
+              </th>
+              <th className="py-4 font-bold px-5 text-left text-gray-700 rounded-tr-lg">
+                Action
+              </th>
             </tr>
           </thead>
           <tbody>
-            {notes.map(note => (
+            {notes.map((note) => (
               <tr key={note.id} className="border-b hover:bg-gray-50">
                 <td className="py-4 px-5">{note.subject}</td>
                 <td className="py-4 px-5">{note.topic}</td>
