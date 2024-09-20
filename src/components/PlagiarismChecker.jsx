@@ -19,19 +19,16 @@ const PlagiarismChecker = () => {
       method: 'POST',
       url: 'https://plagiarism-source-checker-with-links.p.rapidapi.com/data',
       headers: {
-        'x-rapidapi-key': 'YOUR_RAPIDAPI_KEY', // Replace with your RapidAPI key
-        'x-rapidapi-host': 'plagiarism-source-checker-with-links.p.rapidapi.com'
+        headers: {
+          'x-rapidapi-key': 'fe28f1f18dmshef00579f4c1b0f6p10bd25jsne8944f566fff',
+          'x-rapidapi-host': 'plagiarism-source-checker-with-links.p.rapidapi.com'
+        },      
       },
       data: data
     };
 
     try {
-      const response = await axios.post(
-        "http://localhost:5000/check_plagiarism",
-        {
-          fileUrl,
-        }
-      );
+      const response = await axios.request(options);
       setResult(response.data);
       console.log(response.data);
     } catch (error) {
