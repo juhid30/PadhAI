@@ -275,6 +275,8 @@ prompt_for_details = """
     }
 """
 
+
+
 @app.route('/upload', methods=['POST'])
 def upload_file():
     if 'file' not in request.files:
@@ -339,6 +341,12 @@ def compare():
 
     # Return the cleaned and parsed response from the AI
     return jsonify({"response": clean_json_string(response)})
+
+
+@app.route('/check_plagiarism', methods=['POST'])
+def checkPlagiarism():  
+      
+
 
 
 if __name__ == '__main__':
