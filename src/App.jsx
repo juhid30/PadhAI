@@ -7,8 +7,9 @@ import Test from "./components/test";
 function App() {
   return (
     <>
-      <div className="bg-red-900">
-        <Test />
+      <div className="">
+        uyfujg
+        <Test />{" "}
       </div>
     </>
   );
