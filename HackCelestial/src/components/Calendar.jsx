@@ -1,7 +1,4 @@
 import React, { useState, useContext, useEffect } from "react";
-import Sidebar from "../components/Sidebar";
-// import Sidebar2 from "./Calendar/Sidebar";
-import Navbar from "../components/Navbar";
 import Fullcalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
@@ -9,16 +6,8 @@ import interactionPlugin from "@fullcalendar/interaction";
 
 function Calendar() {
   return (
-    <div className="h-[100vh]">
-      <Navbar />
-      <div className="flex h-[90%]">
-        <div className="w-[7.5%] flex flex-col ">
-          <Sidebar />
-        </div>
-        <div className="bg-[] w-[92.5%] h-full p-9 flex">
-          <CalendarComponent />
-        </div>
-      </div>
+    <div className="bg-[] w-[92.5%] h-full p-9 flex">
+      <CalendarComponent />
     </div>
   );
 }
@@ -48,3 +37,10 @@ function CalendarComponent() {
     </div>
   );
 }
+
+// Sample Data
+// {
+//     "title": "Math Exam",
+//     "start": "2024-09-04T15:00:00",
+//     "end": "2024-09-04T17:20:00"
+//   }
