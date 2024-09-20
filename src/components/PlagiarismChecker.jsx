@@ -4,6 +4,7 @@ import axios from "axios";
 const PlagiarismChecker = () => {
   const [text, setText] = useState('');
   const [result, setResult] = useState(null);
+  const [error, setError] = useState(null);
 
   const handleTextChange = (e) => {
     setText(e.target.value);
@@ -11,20 +12,17 @@ const PlagiarismChecker = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    const data = new FormData();
-    data.append('text', text);
+    setError(null); // Reset error state
 
     const options = {
       method: 'POST',
       url: 'https://plagiarism-source-checker-with-links.p.rapidapi.com/data',
       headers: {
-        headers: {
-          'x-rapidapi-key': 'fe28f1f18dmshef00579f4c1b0f6p10bd25jsne8944f566fff',
-          'x-rapidapi-host': 'plagiarism-source-checker-with-links.p.rapidapi.com'
-        },      
+        'x-rapidapi-key': 'fe28f1f18dmshef00579f4c1b0f6p10bd25jsne8944f566fff', // Replace with your actual API key
+        'x-rapidapi-host': 'plagiarism-source-checker-with-links.p.rapidapi.com',
+        'Content-Type': 'application/json' // Ensure the content type is set correctly
       },
-      data: data
+      data: JSON.stringify({ text }) // Sending text as JSON
     };
 
     try {
@@ -33,6 +31,7 @@ const PlagiarismChecker = () => {
       console.log(response.data);
     } catch (error) {
       console.error("Error checking plagiarism:", error);
+      setError("Error checking plagiarism. Please try again.");
     }
   };
 
@@ -60,6 +59,7 @@ const PlagiarismChecker = () => {
           <pre>{JSON.stringify(result, null, 2)}</pre>
         </div>
       )}
+      {error && <div className="mt-4 text-red-500">{error}</div>}
     </div>
   );
 };
