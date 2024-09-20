@@ -26,7 +26,12 @@ const PlagiarismChecker = () => {
     };
 
     try {
-      const response = await axios.request(options);
+      const response = await axios.post(
+        "http://localhost:5000/check_plagiarism",
+        {
+          fileUrl,
+        }
+      );
       setResult(response.data);
       console.log(response.data);
     } catch (error) {
