@@ -17,7 +17,13 @@ export default Calendar;
 function CalendarComponent() {
   let user = JSON.parse(localStorage.getItem("user"));
   console.log(user);
-  let events = user.testData;
+  // let events = user.testData;
+  let events = {
+    title: "Math Exam",
+    start: "2024-09-04T15:00:00",
+    end: "2024-09-04T17:20:00",
+  };
+
   console.log(events);
 
   return (

@@ -7,7 +7,9 @@ import Test from "./components/test";
 function App() {
   return (
     <>
-      <Test />
+      <div className="bg-red-900">
+        <Test />
+      </div>
     </>
   );
 }
