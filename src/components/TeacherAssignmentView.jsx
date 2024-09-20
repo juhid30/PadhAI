@@ -1,134 +1,81 @@
-import React, { useState, useEffect } from "react";
-import { doc, getDoc } from "firebase/firestore";
-import { db } from "../../firebase"; // Import Firestore
+import React, { useState, useEffect } from 'react';
+import { getFirestore, collection, getDocs } from 'firebase/firestore';
 
 const TeacherAssignmentView = () => {
   const [assignments, setAssignments] = useState([]);
-  const [selectedAssignmentId, setSelectedAssignmentId] = useState(null);
-  const [submissions, setSubmissions] = useState([]);
-  const [students, setStudents] = useState({});
+  const db = getFirestore();
 
   useEffect(() => {
-    // Fetch the single AssignmentRecord document from Firestore
-    const fetchAssignmentRecord = async () => {
-      const docRef = doc(db, "AssignmentRecord", "LxK4DMA7H48z4mrND6zQ"); // Replace with actual document ID
-      const docSnap = await getDoc(docRef);
+    const fetchAssignments = async () => {
+      try {
+        // Fetch all submitted assignments
+        const submittedAssignmentsSnapshot = await getDocs(collection(db, 'SubmittedAssignments'));
+        const submittedAssignments = submittedAssignmentsSnapshot.docs.map(doc => ({
+          ...doc.data(),
+          id: doc.id
+        }));
 
-      if (docSnap.exists()) {
-        const assignmentData = docSnap.data();
-        const studentAssignments = assignmentData.students;
+        // Fetch all assignment records
+        const assignmentRecordsSnapshot = await getDocs(collection(db, 'AssignmentRecord'));
+        const assignmentRecords = assignmentRecordsSnapshot.docs.map(doc => ({
+          ...doc.data(),
+          id: doc.id
+        }));
 
-        // Collect all assignments for dropdown selection
-        const fetchedAssignments = [];
-        const studentIds = Object.keys(studentAssignments);
+        // Map through submitted assignments and match with assignment records
+        const assignmentsData = submittedAssignments.map(submittedAssignment => {
+          const assignmentRecord = assignmentRecords.find(record => record.id === submittedAssignment.assignmentId);
+          const isLate = new Date(submittedAssignment.submissionDate) > new Date(assignmentRecord.dueDate);
 
-        // Gather all assignments from all students
-        studentIds.forEach((studentId) => {
-          studentAssignments[studentId].forEach((assignment) => {
-            // Check if the assignment topic matches the selected assignment's topic
-            // if (assignment.topic === selectedAssignmentId) {
-            fetchedAssignments.push({
-              ...assignment,
-              studentId,
-            });
-            // }
-          });
+          return {
+            subject: assignmentRecord.subject,
+            topic: assignmentRecord.topic,
+            isLate,
+            docURL: submittedAssignment.docURL,
+          };
         });
 
-        // Remove duplicates (assuming topics are unique across students)
-        const uniqueAssignments = [
-          ...new Map(
-            fetchedAssignments.map((item) => [item.topic, item])
-          ).values(),
-        ];
-
-        setAssignments(uniqueAssignments);
-        setStudents(studentAssignments); // Keep the student data for future lookups
-      } else {
-        console.log("No such document!");
+        setAssignments(assignmentsData);
+      } catch (error) {
+        console.error('Error fetching assignments:', error);
       }
     };
 
-    fetchAssignmentRecord();
-  }, []);
-
-  const handleAssignmentChange = (assignmentTopic) => {
-    setSelectedAssignmentId(assignmentTopic);
-
-    // Filter submissions where the topic matches
-    const filteredSubmissions = [];
-
-    Object.keys(students).forEach((studentId) => {
-      const studentAssignments = students[studentId];
-      studentAssignments.forEach((assignment) => {
-        if (assignment.topic === assignmentTopic) {
-          filteredSubmissions.push({
-            ...assignment,
-            studentId,
-          });
-        }
-      });
-    });
-
-    setSubmissions(filteredSubmissions);
-  };
+    fetchAssignments();
+  }, [db]);
 
   return (
     <div className="p-6">
-      <h1 className="text-3xl font-bold mb-4">View Student Submissions</h1>
-
-      <div className="mb-6">
-        <label htmlFor="assignments" className="block mb-2">
-          Select Assignment:
-        </label>
-        <select
-          id="assignments"
-          className="p-2 border rounded"
-          onChange={(e) => handleAssignmentChange(e.target.value)}
-        >
-          <option value="">Select an assignment</option>
+      <h2 className="text-2xl font-bold mb-4">Submitted Assignments</h2>
+      <table className="min-w-full border-collapse border border-gray-300">
+        <thead className="bg-gray-100">
+          <tr>
+            <th className="border border-gray-300 px-4 py-2">Subject</th>
+            <th className="border border-gray-300 px-4 py-2">Topic</th>
+            <th className="border border-gray-300 px-4 py-2">Late Submission</th>
+            <th className="border border-gray-300 px-4 py-2">Document</th>
+          </tr>
+        </thead>
+        <tbody>
           {assignments.map((assignment, index) => (
-            <option key={index} value={assignment.topic}>
-              {assignment.topic}
-            </option>
+            <tr key={index} className="hover:bg-gray-50">
+              <td className="border border-gray-300 px-4 py-2">{assignment.subject}</td>
+              <td className="border border-gray-300 px-4 py-2">{assignment.topic}</td>
+              <td className="border border-gray-300 px-4 py-2">{assignment.isLate ? 'Yes' : 'No'}</td>
+              <td className="border border-gray-300 px-4 py-2">
+                <a
+                  href={assignment.docURL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-500 hover:underline"
+                >
+                  View Document
+                </a>
+              </td>
+            </tr>
           ))}
-        </select>
-      </div>
-
-      {selectedAssignmentId && submissions.length > 0 && (
-        <div className="mb-6">
-          <h2 className="text-2xl font-semibold mb-4">Student Submissions</h2>
-          <table className="min-w-full bg-white border border-gray-300">
-            <thead>
-              <tr>
-                <th className="py-2 border">Student ID</th>
-                <th className="py-2 border">Date of Submission</th>
-                <th className="py-2 border">Document</th>
-              </tr>
-            </thead>
-            <tbody>
-              {submissions.map((submission) => (
-                <tr key={submission.studentId}>
-                  <td className="py-2 border">{submission.studentId}</td>
-                  <td className="py-2 border">
-                    {new Date(submission.dateOfSubmission).toLocaleDateString()}
-                  </td>
-                  <td className="py-2 border">
-                    <a
-                      href={submission.ansDocURL}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-blue-500 underline"
-                    >
-                      View Document
-                    </a>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+        </tbody>
+      </table>
     </div>
   );
 };
