@@ -44,7 +44,7 @@ const TeacherAssignmentView = () => {
               isLate,
               docURL: submittedAssignment.docURL,
             };
-          }
+          } 
         );
 
         setAssignments(assignmentsData);
@@ -58,36 +58,29 @@ const TeacherAssignmentView = () => {
 
   return (
     <div className="p-6">
-      <h2 className="text-2xl font-bold mb-4">Submitted Assignments</h2>
-      <table className="min-w-full border-collapse border border-gray-300">
-        <thead className="bg-gray-100">
+      <h2 className="text-5xl text-center font-bold text-blue-700 mb-8">Submitted Assignments</h2>
+      <hr className="border-t-1 border-blue-900 mb-9" />
+      <table className="min-w-full border-collapse border border-blue-300">
+        <thead className="bg-blue-100">
           <tr>
-            <th className="border border-gray-300 px-4 py-2">Subject</th>
-            <th className="border border-gray-300 px-4 py-2">Topic</th>
-            <th className="border border-gray-300 px-4 py-2">
-              Late Submission
-            </th>
-            <th className="border border-gray-300 px-4 py-2">Document</th>
+            <th className="border border-blue-300 px-4 py-2">Subject</th>
+            <th className="border border-blue-300 px-4 py-2">Topic</th>
+            <th className="border border-blue-300 px-4 py-2">Late Submission</th>
+            <th className="border border-blue-300 px-4 py-2">Document</th>
           </tr>
         </thead>
         <tbody>
           {assignments.map((assignment, index) => (
-            <tr key={index} className="hover:bg-gray-50">
-              <td className="border border-gray-300 px-4 py-2">
-                {assignment.subject}
-              </td>
-              <td className="border border-gray-300 px-4 py-2">
-                {assignment.topic}
-              </td>
-              <td className="border border-gray-300 px-4 py-2">
-                {assignment.isLate ? "Yes" : "No"}
-              </td>
-              <td className="border border-gray-300 px-4 py-2">
+            <tr key={index} className="hover:bg-blue-50 transition duration-200">
+              <td className="border border-blue-300 px-4 py-2">{assignment.subject}</td>
+              <td className="border border-blue-300 px-4 py-2">{assignment.topic}</td>
+              <td className="border border-blue-300 px-4 py-2">{assignment.isLate ? "Yes" : "No"}</td>
+              <td className="border border-blue-300 px-4 py-2">
                 <a
                   href={assignment.docURL}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-blue-500 hover:underline"
+                  className="text-blue-500 hover:underline transition duration-200"
                 >
                   View Document
                 </a>
