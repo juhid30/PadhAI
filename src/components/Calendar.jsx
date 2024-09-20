@@ -28,7 +28,7 @@ const getAssignmentsForStudent = async () => {
   try {
     const assignmentsRef = collection(db, "AssignmentRecord");
     const querySnapshot = await getDocs(assignmentsRef); // Fetch all assignments
-    
+
     const allAssignments = [];
     querySnapshot.forEach((doc) => {
       allAssignments.push({ id: doc.id, ...doc.data() });
@@ -46,7 +46,7 @@ const getEvents = async () => {
   try {
     const eventsRef = collection(db, "EventScheduling");
     const querySnapshot = await getDocs(eventsRef);
-    
+
     const allEvents = [];
     querySnapshot.forEach((doc) => {
       allEvents.push({ id: doc.id, ...doc.data() });
@@ -78,18 +78,18 @@ function CalendarComponent() {
 
             // Filter assignments based on the student's year
             const filteredAssignments = allAssignments
-              .filter(assignment => Number(assignment.year) === studentYear)
-              .map(assignment => ({
+              .filter((assignment) => Number(assignment.year) === studentYear)
+              .map((assignment) => ({
                 title: assignment.topic,
                 start: assignment.dos.toDate().toISOString(), // Set start date to due date
-                end: assignment.dos.toDate().toISOString(),   // Set end date to due date
+                end: assignment.dos.toDate().toISOString(), // Set end date to due date
               }));
 
             // Fetch events from EventScheduling
             const allEvents = await getEvents();
 
             // Append events to the events array
-            const filteredEvents = allEvents.map(event => ({
+            const filteredEvents = allEvents.map((event) => ({
               title: event.title,
               start: event.start,
               end: event.end,
@@ -99,7 +99,10 @@ function CalendarComponent() {
             setEvents([...filteredAssignments, ...filteredEvents]);
           }
         } catch (error) {
-          console.error("Error fetching assignments or student details:", error);
+          console.error(
+            "Error fetching assignments or student details:",
+            error
+          );
         }
       }
     };

@@ -1,6 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { db, storage } from "../../firebase";
-import { doc, getDoc, collection, getDocs, updateDoc, setDoc } from "firebase/firestore";
+import {
+  doc,
+  getDoc,
+  collection,
+  getDocs,
+  updateDoc,
+  setDoc,
+} from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 // Fetch student details based on the student ID
@@ -83,7 +90,10 @@ const AssignmentSubmission = () => {
             setPastDueAssignments(pastDue);
           }
         } catch (error) {
-          console.error("Error fetching assignments or student details:", error);
+          console.error(
+            "Error fetching assignments or student details:",
+            error
+          );
         }
       }
     };
@@ -116,34 +126,43 @@ const AssignmentSubmission = () => {
 
     try {
       // Create a storage reference in the 'uploadedNotes' bucket
-      const storageRef = ref(storage, `uploadedNotes/${selectedAssignment}_${file.name}`);
-      
+      const storageRef = ref(
+        storage,
+        `uploadedNotes/${selectedAssignment}_${file.name}`
+      );
+
       // Upload the file to Firebase Storage
       await uploadBytes(storageRef, file);
 
       // Get the download URL of the uploaded file
       const downloadURL = await getDownloadURL(storageRef);
-      
+
       console.log(`File uploaded successfully. File URL: ${downloadURL}`);
 
       // Fetch the student ID from localStorage
       const studentId = localStorage.getItem("studentId");
 
       // Update the Firestore document with assignmentId, studentId, file URL, and other fields
-      console.log(selectedAssignment)
-      const assignmentDocRef = doc(db, "SubmittedAssignments", selectedAssignment);
+      console.log(selectedAssignment);
+      const assignmentDocRef = doc(
+        db,
+        "SubmittedAssignments",
+        selectedAssignment
+      );
 
-      const late = await pendingAssignments.find(assignment => assignment.id === selectedAssignment) ? false : true
-
-
+      const late = (await pendingAssignments.find(
+        (assignment) => assignment.id === selectedAssignment
+      ))
+        ? false
+        : true;
 
       await setDoc(assignmentDocRef, {
         documentString: downloadURL,
         isSubmitted: true,
-        submittedOn: new Date().toISOString(),  // Current date as ISO string
+        submittedOn: new Date().toISOString(), // Current date as ISO string
         isLate: late,
         studentId: studentId,
-        assignmentId: selectedAssignment 
+        assignmentId: selectedAssignment,
       });
 
       console.log("Firestore updated with assignment details.");
@@ -155,10 +174,11 @@ const AssignmentSubmission = () => {
       const newPastDue = pastDueAssignments.filter(
         (assignment) => assignment.id !== selectedAssignment
       );
-      const submittedAssignment = [...pendingAssignments, ...pastDueAssignments].find(
-        (assignment) => assignment.id === selectedAssignment
-      );
-      
+      const submittedAssignment = [
+        ...pendingAssignments,
+        ...pastDueAssignments,
+      ].find((assignment) => assignment.id === selectedAssignment);
+
       setPendingAssignments(newPending);
       setPastDueAssignments(newPastDue);
       setSubmittedAssignments([...submittedAssignments, submittedAssignment]);
@@ -170,7 +190,6 @@ const AssignmentSubmission = () => {
       console.error("Error uploading file and updating Firestore:", error);
     }
   };
-
 
   return (
     <div className="p-6 bg-gray-100 rounded-lg shadow-md">
@@ -202,7 +221,9 @@ const AssignmentSubmission = () => {
                   <p>
                     Due Date:{" "}
                     {assignment.dos
-                      ? new Date(assignment.dos.seconds * 1000).toLocaleDateString()
+                      ? new Date(
+                          assignment.dos.seconds * 1000
+                        ).toLocaleDateString()
                       : "No due date"}
                   </p>
                   <button
@@ -246,7 +267,9 @@ const AssignmentSubmission = () => {
                   <p>
                     Due Date:{" "}
                     {assignment.dos
-                      ? new Date(assignment.dos.seconds * 1000).toLocaleDateString()
+                      ? new Date(
+                          assignment.dos.seconds * 1000
+                        ).toLocaleDateString()
                       : "No due date"}
                   </p>
                   <button
@@ -290,7 +313,9 @@ const AssignmentSubmission = () => {
                   <p>
                     Due Date:{" "}
                     {assignment.dos
-                      ? new Date(assignment.dos.seconds * 1000).toLocaleDateString()
+                      ? new Date(
+                          assignment.dos.seconds * 1000
+                        ).toLocaleDateString()
                       : "No due date"}
                   </p>
                 </div>

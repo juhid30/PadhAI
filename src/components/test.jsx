@@ -24,10 +24,8 @@ const Test = () => {
     <>
       {/* <AudioRecorder /> */}
       <VideoPlayer />
-
     </>
   );
 };
 
 export default Test;
-

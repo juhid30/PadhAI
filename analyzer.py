@@ -348,5 +348,6 @@ def compare():
     return jsonify({"response": clean_json_string(response)})
 
 
+
 if __name__ == '__main__':
     app.run(debug=True)

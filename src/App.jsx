@@ -48,6 +48,7 @@ function App() {
       <ErrorBoundary>
         <Routes>
           <Route path="/" element={<Login />} />
+          <Route path="/resume-upload" element={<ResumeUpload />} />
           <Route path="/add-assignment" element={<AddAssignmentForm />} />
           <Route path="/assignment-submission" element={<AssignmentSubmission />} />
           <Route path="/book-list" element={<BookList />} />
@@ -56,7 +57,7 @@ function App() {
           <Route path="/coding-platform" element={<CodingPlatform />} />
           <Route path="/exam-scheduler" element={<ExamScheduler />} />
           <Route path="/notes" element={<Notes />} />
-          <Route path="/rooms" element={<Rooms />} />
+          {/* <Route path="/rooms" element={<Rooms />} /> */}
           <Route path="/plagiarism-checker" element={<PlagiarismChecker />} />
           <Route path="/skills" element={<Skills />} />
           <Route path="/teacher-assignment-view" element={<TeacherAssignmentView />} />
