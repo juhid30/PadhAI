@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { db, storage } from '../../firebase'; // Make sure to import storage from your Firebase configuration
+import { db, storage } from "../../firebase"; // Make sure to import storage from your Firebase configuration
 import { ref, uploadString, getDownloadURL } from "firebase/storage";
 import { collection, addDoc } from "firebase/firestore";
 import { GoogleGenerativeAI } from "@google/generative-ai";
@@ -45,7 +45,8 @@ const UploadNotes = () => {
       const genAI = new GoogleGenerativeAI(API_KEY);
       const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-      const prompt = "Tell me how accurate this information is on a scale of 1 to 100. Give me only a number and nothing else.";
+      const prompt =
+        "Tell me how accurate this information is on a scale of 1 to 100. Give me only a number and nothing else.";
       const image = {
         inlineData: {
           data: base64Image,
@@ -59,13 +60,13 @@ const UploadNotes = () => {
 
       // Upload the file to Firebase Storage
       const storageRef = ref(storage, `notes/${file.name}`);
-      await uploadString(storageRef, base64Image, 'base64');
+      await uploadString(storageRef, base64Image, "base64");
 
       // Get the download URL
       const docURL = await getDownloadURL(storageRef);
 
       // Upload metadata to Firestore
-      await addDoc(collection(db, 'Notes'), {
+      await addDoc(collection(db, "Notes"), {
         topic: documentName,
         subject,
         year,
@@ -130,7 +131,9 @@ const UploadNotes = () => {
           required
           className="w-full p-4 mb-6 border border-purple-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
         >
-          <option value="" disabled>Select Year</option>
+          <option value="" disabled>
+            Select Year
+          </option>
           <option value={1}>1</option>
           <option value={2}>2</option>
           <option value={3}>3</option>

@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
-import { db } from '../../firebase'; // Ensure the path to your firebase file is correct
-import { collection, addDoc } from 'firebase/firestore';
+import React, { useState } from "react";
+import { db } from "../../firebase"; // Ensure the path to your firebase file is correct
+import { collection, addDoc } from "firebase/firestore";
 
 const NotesUpload = () => {
-  const [docURL, setDocURL] = useState('');
-  const [subject, setSubject] = useState('');
-  const [teacherID, setTeacherID] = useState('');
-  const [topic, setTopic] = useState('');
+  const [docURL, setDocURL] = useState("");
+  const [subject, setSubject] = useState("");
+  const [teacherID, setTeacherID] = useState("");
+  const [topic, setTopic] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
@@ -16,20 +16,20 @@ const NotesUpload = () => {
     setError(null);
 
     try {
-      await addDoc(collection(db, 'Notes'), {
+      await addDoc(collection(db, "Notes"), {
         docURL,
         dou: new Date(), // Current timestamp
         subject,
         teacherID,
         topic,
       });
-      setDocURL('');
-      setSubject('');
-      setTeacherID('');
-      setTopic('');
-      alert('Note uploaded successfully!');
+      setDocURL("");
+      setSubject("");
+      setTeacherID("");
+      setTopic("");
+      alert("Note uploaded successfully!");
     } catch (err) {
-      setError('Failed to upload note. Please try again.');
+      setError("Failed to upload note. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -76,7 +76,7 @@ const NotesUpload = () => {
           disabled={loading}
           className="w-full p-2 bg-primary text-light rounded hover:bg-primaryDark transition duration-200"
         >
-          {loading ? 'Uploading...' : 'Upload Note'}
+          {loading ? "Uploading..." : "Upload Note"}
         </button>
       </form>
       {error && <p className="text-red-500 mt-2">{error}</p>}

@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify
 import fitz  # PyMuPDF
+import requests
 from PIL import Image
 import base64
 import io
@@ -8,9 +9,13 @@ import json
 from flask_cors import CORS
 app = Flask(__name__)
 
-CORS(app, resources={r"/*": {"origins": "http://localhost:5173"}})
+CORS(app, resources={r"/*": {"origins": "*"}})
 
 genai.configure(api_key="AIzaSyCVOV_MuOdKNFYVTQOzjtjpSDqL73FspW8")
+
+COPYLEAKS_EMAIL = 'test.juhid30@example.com'  # Replace with your Copyleaks account email
+COPYLEAKS_API_KEY = 'a67ab3ee-6d33-4824-9b02-b0376edd5a43'          # Replace with your Copyleaks API key
+COPYLEAKS_API_URL = 'https://api.copyleaks.com/v3/'
 
 def input_pdf_setup(file_content):
     pdf_document = fitz.open(stream=file_content, filetype="pdf")
@@ -273,7 +278,9 @@ prompt_for_details = """
             "contact_no": "Contact number extracted from resume"
         }
     }
+
 """
+
 
 @app.route('/upload', methods=['POST'])
 def upload_file():
@@ -339,6 +346,7 @@ def compare():
 
     # Return the cleaned and parsed response from the AI
     return jsonify({"response": clean_json_string(response)})
+
 
 
 if __name__ == '__main__':

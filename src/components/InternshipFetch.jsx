@@ -37,6 +37,8 @@ const InternshipFetch = () => {
   const [isCompareMode, setIsCompareMode] = useState(false);
   const [selectedForCompare, setSelectedForCompare] = useState([]);
   const [showCompareModal, setShowCompareModal] = useState(false);
+  const [resumeFile, setResumeFile] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     const fetchInternships = async () => {
@@ -90,11 +92,64 @@ const InternshipFetch = () => {
     }
   };
 
+  const convertInternshipToString = (internship) => {
+    return `
+      Title: ${internship.title}
+      Company: ${internship.companyName}
+      Description: ${internship.desc}
+      Duration: ${internship.duration}
+      Last Date to Apply: ${new Date(internship.lastDateToApply.seconds * 1000).toLocaleDateString()}
+      Stipend: ${internship.salary}
+    `;
+  };
+
+  const handleResumeUpload = (event) => {
+    const file = event.target.files[0];
+    setResumeFile(file);
+  };
+
+  const handleSubmitComparison = async () => {
+    if (!resumeFile) {
+      alert('Please upload a resume before submitting.');
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    const formData = new FormData();
+    formData.append('resume', resumeFile);
+    formData.append('internships', JSON.stringify(selectedForCompare.map(convertInternshipToString)));
+
+    try {
+      const response = await fetch('http://localhost:5000/compare_jobs', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        alert(`Comparison submitted successfully! ${result.message}`);
+        setShowCompareModal(false);
+        setSelectedForCompare([]);
+        setResumeFile(null);
+      } else {
+        const errorData = await response.json();
+        alert(`Error: ${errorData.message}`);
+      }
+    } catch (error) {
+      console.error('Error submitting comparison:', error);
+      alert('An error occurred while submitting the comparison. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+
   const CompareModal = () => (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-      <div className="bg-white p-8 rounded-lg shadow-lg max-w-4xl w-full">
+      <div className="bg-white p-8 rounded-lg shadow-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
         <h2 className="text-3xl font-bold text-indigo-900 mb-4">Compare Internships</h2>
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-4 mb-6">
           {selectedForCompare.map((internship, index) => (
             <div key={internship.id} className="border p-4 rounded">
               <h3 className="text-2xl font-semibold text-indigo-800 mb-2">{internship.title}</h3>
@@ -106,7 +161,28 @@ const InternshipFetch = () => {
             </div>
           ))}
         </div>
-        <Button className="mt-4" onClick={() => setShowCompareModal(false)}>Close</Button>
+        <div className="mb-6">
+          <h3 className="text-xl font-semibold mb-2">Upload Your Resume</h3>
+          <input
+            type="file"
+            onChange={handleResumeUpload}
+            accept=".pdf,.doc,.docx"
+            className="mb-2"
+          />
+          {resumeFile && <p className="text-sm text-green-600">File selected: {resumeFile.name}</p>}
+        </div>
+        <div className="flex justify-end space-x-4">
+          <Button onClick={handleSubmitComparison} disabled={isSubmitting}>
+            {isSubmitting ? 'Submitting...' : 'Submit Comparison'}
+          </Button>
+          <Button 
+            onClick={() => setShowCompareModal(false)} 
+            className="bg-gray-300 text-gray-700 hover:bg-gray-400"
+            disabled={isSubmitting}
+          >
+            Close
+          </Button>
+        </div>
       </div>
     </div>
   );

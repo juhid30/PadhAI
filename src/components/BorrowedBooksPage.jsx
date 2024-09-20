@@ -1,15 +1,21 @@
-import React, { useState, useEffect } from 'react';
-import { db } from '../../firebase'; // Your Firebase config file
-import { collection, getDocs, doc, updateDoc, getDoc } from 'firebase/firestore';
+import React, { useState, useEffect } from "react";
+import { db } from "../../firebase"; // Your Firebase config file
+import {
+  collection,
+  getDocs,
+  doc,
+  updateDoc,
+  getDoc,
+} from "firebase/firestore";
 
 const BorrowedBooksPage = () => {
   const [students, setStudents] = useState([]);
   const [expandedStudentId, setExpandedStudentId] = useState(null);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
 
   // Fetch students and filter out those with no borrowed books
   const fetchStudents = async () => {
-    const studentsCollection = collection(db, 'Student');
+    const studentsCollection = collection(db, "Student");
     const studentsSnapshot = await getDocs(studentsCollection);
     const studentsList = await Promise.all(
       studentsSnapshot.docs.map(async (studentDoc) => {
@@ -18,7 +24,7 @@ const BorrowedBooksPage = () => {
         return borrowedBooks.length > 0
           ? {
               id: studentDoc.id,
-              name: studentData.name || 'Unknown Student',
+              name: studentData.name || "Unknown Student",
               books: borrowedBooks,
             }
           : null;
@@ -29,24 +35,29 @@ const BorrowedBooksPage = () => {
 
   // Return book function and remove student if no books left
   const returnBook = async (studentId, bookId) => {
-    const studentRef = doc(db, 'Student', studentId);
+    const studentRef = doc(db, "Student", studentId);
     const studentSnap = await getDoc(studentRef);
     if (studentSnap.exists()) {
       const data = studentSnap.data();
-      const updatedBooks = data.booksBorrowed.filter((book) => book.bookId !== bookId);
+      const updatedBooks = data.booksBorrowed.filter(
+        (book) => book.bookId !== bookId
+      );
 
       await updateDoc(studentRef, { booksBorrowed: updatedBooks });
 
       // Update UI after returning the book
-      setStudents((prevStudents) =>
-        prevStudents
-          .map((student) =>
-            student.id === studentId ? { ...student, books: updatedBooks } : student
-          )
-          .filter((student) => student.books.length > 0) // Remove student from list if no books are left
+      setStudents(
+        (prevStudents) =>
+          prevStudents
+            .map((student) =>
+              student.id === studentId
+                ? { ...student, books: updatedBooks }
+                : student
+            )
+            .filter((student) => student.books.length > 0) // Remove student from list if no books are left
       );
 
-      alert('Book has been returned.');
+      alert("Book has been returned.");
     }
   };
 
@@ -75,20 +86,29 @@ const BorrowedBooksPage = () => {
               <div
                 className="flex justify-between items-center p-4 cursor-pointer hover:bg-gray-200"
                 onClick={() =>
-                  setExpandedStudentId(expandedStudentId === student.id ? null : student.id)
+                  setExpandedStudentId(
+                    expandedStudentId === student.id ? null : student.id
+                  )
                 }
               >
-                <h2 className="text-lg font-semibold text-gray-800">{student.name}</h2>
+                <h2 className="text-lg font-semibold text-gray-800">
+                  {student.name}
+                </h2>
                 {student.books.length > 0 && (
                   <button className="text-blue-500">
-                    {expandedStudentId === student.id ? 'Hide Books' : 'Show Books'}
+                    {expandedStudentId === student.id
+                      ? "Hide Books"
+                      : "Show Books"}
                   </button>
                 )}
               </div>
               {expandedStudentId === student.id && student.books.length > 0 && (
                 <div className="p-4 bg-gray-50 rounded-b-lg">
                   {student.books.map((book) => (
-                    <div key={book.bookId} className="flex items-center justify-between p-2 border-b">
+                    <div
+                      key={book.bookId}
+                      className="flex items-center justify-between p-2 border-b"
+                    >
                       <div className="flex items-center">
                         <img
                           src={book.bookImage}
@@ -97,8 +117,12 @@ const BorrowedBooksPage = () => {
                         />
                         <div>
                           <p className="text-gray-800">{book.bookName}</p>
-                          <p className="text-gray-600 text-sm">Issued on: {book.dateOfIssue}</p>
-                          <p className="text-gray-600 text-sm">Due: {book.dueDate}</p>
+                          <p className="text-gray-600 text-sm">
+                            Issued on: {book.dateOfIssue}
+                          </p>
+                          <p className="text-gray-600 text-sm">
+                            Due: {book.dueDate}
+                          </p>
                         </div>
                       </div>
                       <button

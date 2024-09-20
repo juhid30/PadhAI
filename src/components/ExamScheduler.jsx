@@ -114,7 +114,10 @@ const ExamScheduler = () => {
             onChange={(e) => setAllDay(e.target.checked)}
             className="h-5 w-5 text-blue-600 focus:ring focus:ring-blue-300 rounded"
           />
-          <label htmlFor="all-day" className="ml-2 text-lg font-medium text-gray-700">
+          <label
+            htmlFor="all-day"
+            className="ml-2 text-lg font-medium text-gray-700"
+          >
             All Day Event
           </label>
         </div>
