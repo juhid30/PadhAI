@@ -6,7 +6,7 @@ import Login from "./components/Login.jsx";
 import BookList from "./components/BookList.jsx";
 import UploadNotes from "./components/UploadNotes.jsx";
 import UploadListing from "./components/UploadListing.jsx";
-import Rooms from "./components/Rooms.jsx";
+// import Rooms from "./components/Rooms.jsx";
 import AddAssignmentForm from "./components/AddAssignmentForm.jsx";
 import AssignmentSubmission from "./components/AssignmentSubmission.jsx";
 import BorrowedBooksPage from "./components/BorrowedBooksPage.jsx";
@@ -17,6 +17,8 @@ import Notes from "./components/Notes.jsx";
 import PlagiarismChecker from "./components/PlagiarismChecker.jsx";
 import Skills from "./components/Skills.jsx";
 import TeacherAssignmentView from "./components/TeacherAssignmentView.jsx";
+import AudioRecorder from "./components/AudioRecorder.jsx";
+import Sidebar from "./components/Sidebar.jsx";
 
 // Error Boundary Component
 class ErrorBoundary extends React.Component {
@@ -48,7 +50,7 @@ function App() {
       <ErrorBoundary>
         <Routes>
           <Route path="/" element={<Login />} />
-          <Route path="/resume-upload" element={<ResumeUpload />} />
+          {/* <Route path="/resume-upload" element={<ResumeUpload />} /> */}
           <Route path="/add-assignment" element={<AddAssignmentForm />} />
           <Route path="/assignment-submission" element={<AssignmentSubmission />} />
           <Route path="/book-list" element={<BookList />} />
@@ -64,6 +66,9 @@ function App() {
           {/* <Route path="/test" element={<Test />} /> */}
           <Route path="/upload-notes" element={<UploadNotes />} />
           <Route path="/upload-listing" element={<UploadListing />} />
+          <Route path="/audioo" element={<AudioRecorder />} />
+          <Route path="/sidebar" element={<Sidebar />} />
+
         </Routes>
       </ErrorBoundary>
     </Router>
