@@ -128,65 +128,10 @@ def get_gemini_response_for_text(input,text,prompt):
 
 input_prompt2 = "I am giving you a text field. With respect to the job description given, I had asked the candidate why does he consider himself as a good fit for the role. The content of the text I am going to give is an answer to my question. I want you to rate the answer out of 5 with a reason for the same. Give it in json format."
 
-def compare_jobs(job1, job2, prompt):
+def compare_jobs(job1, job2,resume_analysis, prompt):
   # get_gemini_response()
   print("HELLO")
-  resume_analysis = """
-  {
-  "response": {
-    "resume_evaluation": {
-        "key_qualifications_and_experience": {
-            "leadership_and_teamwork": "Jash has a strong history of leadership and teamwork, evident in his roles as Web Team member, Junior Committee member, and President of student organizations. He also volunteered for the Faculty Development Program on 'Training Teachers for Artificial Intelligence in Schools.'",
-            "project_experience": [
-                "Vidyarthi - Student Experience Platform",
-                "Tarakki - Campus Placement Scheduler",
-                "Forge Finance - Financial Literacy for Beginners",
-                "INNOVS 2.0",
-                "Newbiethon",
-                "Technotion",
-                "Best Performer, Competitive Coding",
-                "Adrubotics"
-            ],
-            "relevant_expertise": "Jash has proven experience in building and maintaining web applications using modern frontend frameworks and backend technologies. He has a good understanding of database management and is comfortable working in agile development environments.",
-            "technical_skills": [
-                "ReactJS",
-                "NodeJS",
-                "MongoDB",
-                "HTML",
-                "CSS",
-                "TailwindCSS",
-                "VanillaJS",
-                "Three.JS",
-                "Java",
-                "Python",
-                "C",
-                "OOP",
-                "Illustrator",
-                "Figma",
-                "SEO",
-                "Digital Marketing",
-                "MS Office"
-            ]
-        },
-        "potential_gaps_or_areas_for_exploration": {
-            "quantifiable_metrics": "Encouraging Jash to quantify his accomplishments with metrics whenever possible will strengthen his resume. For instance, providing statistics about user engagement, project completion time, or impact on specific business goals.",
-            "specific_responsibilities": "During the interview, it would be beneficial to delve deeper into Jash's specific responsibilities and contributions within each project. For example, asking questions about his role in the development process, his contributions to specific features, or any challenges he faced during these projects."
-        },
-        "rating": {
-            "max_score": "10",
-            "overall_alignment": "Jash's skills and experience strongly align with the requirements of the job description. His proven ability to develop and maintain web applications using modern technologies, coupled with his leadership and teamwork skills, make him a promising candidate.",
-            "score": "8.5"
-        },
-        "strengths": {
-            "leadership_and_communication": "Jash has demonstrated strong leadership and communication skills through his involvement in various organizations and his ability to coordinate and collaborate with team members. His volunteer work suggests he has a desire to contribute to a larger purpose and effectively communicate his ideas to others.",
-            "project_oriented": "Jash has a track record of successfully completing projects with clear deliverables. His experience in managing complex projects, such as Vidyarthi, showcases his ability to work independently and deliver results under tight deadlines.",
-            "technical_foundation": "Jash demonstrates a strong grasp of frontend technologies and has experience working with backend systems, making him well-equipped to handle a variety of web development tasks."
-        },
-        "summary": "Jash Rashne presents a strong candidate profile with demonstrated experience in web development and technical project management. He has a solid foundation in frontend technologies and has worked on several projects involving ReactJS, NodeJS, and MongoDB. His leadership and teamwork skills are evident through his involvement in various organizations and roles."
-  }
-  }
-  }"""
-
+  
   model = genai.GenerativeModel('gemini-pro')
   response = model.generate_content([resume_analysis, job1, job2, compare_prompt])
   return response.text
@@ -426,12 +371,13 @@ def compare():
     # Extract text from the request
     job1 = request.form.get('job1')
     job2 = request.form.get('job2')
+    resume_analysis = request.form.get('resume_analysis')
     
     if not job1 or not job2:
         return jsonify({"error": "No text input provided"})
 
     # Generate AI response based on the text input
-    response = compare_jobs(job1, job2, compare_prompt)
+    response = compare_jobs(job1, job2,resume_analysis, compare_prompt)
 
     # Return the cleaned and parsed response from the AI
     return jsonify({"response": clean_json_string(response)})
