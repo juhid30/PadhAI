@@ -29,16 +29,32 @@ const getAssignmentsForStudent = async () => {
     const assignmentsRef = collection(db, "AssignmentRecord");
     const querySnapshot = await getDocs(assignmentsRef); // Fetch all assignments
     
-    // Create an array to store all assignments
     const allAssignments = [];
     querySnapshot.forEach((doc) => {
       allAssignments.push({ id: doc.id, ...doc.data() });
     });
 
-    console.log("All Assignments: ", allAssignments); // Check all assignments
     return allAssignments;
   } catch (error) {
     console.error("Error fetching assignments:", error);
+    return [];
+  }
+};
+
+// Function to get events from EventScheduling collection
+const getEvents = async () => {
+  try {
+    const eventsRef = collection(db, "EventScheduling");
+    const querySnapshot = await getDocs(eventsRef);
+    
+    const allEvents = [];
+    querySnapshot.forEach((doc) => {
+      allEvents.push({ id: doc.id, ...doc.data() });
+    });
+
+    return allEvents;
+  } catch (error) {
+    console.error("Error fetching events:", error);
     return [];
   }
 };
@@ -56,29 +72,31 @@ function CalendarComponent() {
           const studentDetails = await getStudentDetails(studentId);
           if (studentDetails) {
             const studentYear = Number(studentDetails.year); // Convert student's year to a number
-            console.log("Student Year: ", studentYear);
 
             // Fetch all assignments
             const allAssignments = await getAssignmentsForStudent();
 
-            // Manually filter assignments based on the student's year
-            const filteredAssignments = [];
-            for (let i = 0; i < allAssignments.length; i++) {
-              const assignment = allAssignments[i];
-              if (Number(assignment.year) === studentYear) {
-                // If the assignment's year matches the student's year, add it to the filtered array
-                filteredAssignments.push({
-                  title: assignment.topic,
-                  start: assignment.dos.toDate().toISOString(), // Set start date to due date (assuming `dos` is a Firestore Timestamp)
-                  end: assignment.dos.toDate().toISOString(),   // Set end date to due date (for simplicity)
-                });
-              }
-            }
+            // Filter assignments based on the student's year
+            const filteredAssignments = allAssignments
+              .filter(assignment => Number(assignment.year) === studentYear)
+              .map(assignment => ({
+                title: assignment.topic,
+                start: assignment.dos.toDate().toISOString(), // Set start date to due date
+                end: assignment.dos.toDate().toISOString(),   // Set end date to due date
+              }));
 
-            console.log("Filtered Assignments: ", filteredAssignments);
+            // Fetch events from EventScheduling
+            const allEvents = await getEvents();
 
-            // Append filtered events to the events array
-            setEvents([...filteredAssignments]); // Update events state with the filtered assignments
+            // Append events to the events array
+            const filteredEvents = allEvents.map(event => ({
+              title: event.title,
+              start: event.start,
+              end: event.end,
+            }));
+
+            // Update events state with filtered assignments and events
+            setEvents([...filteredAssignments, ...filteredEvents]);
           }
         } catch (error) {
           console.error("Error fetching assignments or student details:", error);

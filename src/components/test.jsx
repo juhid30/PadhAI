@@ -24,13 +24,10 @@ const Test = () => {
     <>
       {/* <AudioRecorder /> */}
       <VideoPlayer />
-      {/* <UploadListing /> */}
-      {/* <ExamScheduler /> */}
-      {/* <TeacherAssignmentView teacherId={teacherId} /> */}
-      {/* <AssignmentSubmission studentId={studentId} /> */}
-      {/* <AddAssignmentForm studentId={studentId} /> */}
+
     </>
   );
 };
 
 export default Test;
+
