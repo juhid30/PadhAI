@@ -16,6 +16,7 @@ import React from "react";
 // import TeacherAssignmentView from "./TeacherAssignmentView";
 // import AudioRecorder from "./Audio";
 import VideoPlayer from "./VideoPlayer";
+import InternshipFetch from "./InternshipFetch";
 
 const Test = () => {
   const studentId = "library-test-student"; // Replace with actual student ID
@@ -23,7 +24,8 @@ const Test = () => {
   return (
     <>
       {/* <AudioRecorder /> */}
-      <VideoPlayer />
+      <InternshipFetch/>
+
     </>
   );
 };

@@ -192,13 +192,13 @@ const AssignmentSubmission = () => {
   };
 
   return (
-    <div className="p-6 bg-gray-100 rounded-lg shadow-md">
-      <h1 className="text-3xl font-bold mb-4">Assignment Dashboard</h1>
+    <div className="p-6 bg-neutral-100 rounded-lg shadow-md">
+      
 
       {/* Pending Assignments */}
       <section className="mb-6">
         <div
-          className="flex justify-between items-center cursor-pointer bg-blue-600 text-white p-4 rounded-lg mb-2 transition duration-300 hover:bg-blue-700"
+          className="flex justify-between items-center cursor-pointer bg-indigo-400 text-white p-4 rounded-lg mb-2 transition duration-300 hover:bg-indigo-700"
           onClick={() => toggleSection("pending")}
         >
           <h2 className="text-2xl font-semibold">Pending Assignments</h2>
@@ -228,7 +228,7 @@ const AssignmentSubmission = () => {
                   </p>
                   <button
                     onClick={() => handleSubmit(assignment.id)}
-                    className="mt-2 bg-blue-600 text-white py-2 px-4 rounded transition duration-300 hover:bg-blue-700"
+                    className="mt-2 bg-indigo-600 text-white py-2 px-4 rounded transition duration-300 hover:bg-indigo-700"
                   >
                     Submit
                   </button>
@@ -244,7 +244,7 @@ const AssignmentSubmission = () => {
       {/* Past Due Assignments */}
       <section className="mb-6">
         <div
-          className="flex justify-between items-center cursor-pointer bg-red-600 text-white p-4 rounded-lg mb-2 transition duration-300 hover:bg-red-700"
+          className="flex justify-between items-center cursor-pointer bg-indigo-500 text-white p-4 rounded-lg mb-2 transition duration-300 hover:bg-indigo-700"
           onClick={() => toggleSection("pastDue")}
         >
           <h2 className="text-2xl font-semibold">Past Due Assignments</h2>
@@ -274,7 +274,7 @@ const AssignmentSubmission = () => {
                   </p>
                   <button
                     onClick={() => handleSubmit(assignment.id)}
-                    className="mt-2 bg-red-600 text-white py-2 px-4 rounded transition duration-300 hover:bg-red-700"
+                    className="mt-2 bg-zinc-500 text-white py-2 px-4 rounded transition duration-300 hover:bg-zinc-600"
                   >
                     Submit
                   </button>
@@ -290,7 +290,7 @@ const AssignmentSubmission = () => {
       {/* Submitted Assignments */}
       <section className="mb-6">
         <div
-          className="flex justify-between items-center cursor-pointer bg-green-600 text-white p-4 rounded-lg mb-2 transition duration-300 hover:bg-green-700"
+          className="flex justify-between items-center cursor-pointer bg-indigo-600 text-white p-4 rounded-lg mb-2 transition duration-300 hover:bg-indigo-700"
           onClick={() => toggleSection("submitted")}
         >
           <h2 className="text-2xl font-semibold">Submitted Assignments</h2>
@@ -336,13 +336,13 @@ const AssignmentSubmission = () => {
             <div className="flex justify-end">
               <button
                 onClick={toggleModal}
-                className="mr-4 bg-gray-500 text-white py-2 px-4 rounded transition duration-300 hover:bg-gray-600"
+                className="mr-4 bg-zinc-500 text-white py-2 px-4 rounded transition duration-300 hover:bg-zinc-600"
               >
                 Cancel
               </button>
               <button
                 onClick={handleUpload}
-                className="bg-blue-600 text-white py-2 px-4 rounded transition duration-300 hover:bg-blue-700"
+                className="bg-indigo-600 text-white py-2 px-4 rounded transition duration-300 hover:bg-indigo-700"
               >
                 Upload
               </button>
