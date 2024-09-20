@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { AudioRecorder } from "react-audio-voice-recorder";
+import { AudioRecorder, useAudioRecorder } from "react-audio-voice-recorder";
 import about from "../assets/About.mp4";
 import years from "../assets/5Years.mp4";
 import strengths from "../assets/Strengths&Weaknesses.mp4";
@@ -11,26 +11,30 @@ const VideoPlayer = () => {
   const [isModalOpen, setIsModalOpen] = useState(true);
   const [isPlaying, setIsPlaying] = useState(false);
   const [prediction, setPrediction] = useState(null);
-  const [recordedAudio, setRecordedAudio] = useState(null);
-  const [intervalId, setIntervalId] = useState(null);
+  const [fileUrl, setFileUrl] = useState(null); // File URL for saved audio
+
+  // Audio recorder hook
+  const {
+    startRecording,
+    stopRecording,
+    recordingBlob,
+    isRecording,
+    recordingTime,
+  } = useAudioRecorder();
 
   const handleStart = () => {
     setIsModalOpen(false);
     setIsPlaying(true);
+    startRecording(); // Start recording when the video starts
   };
 
   const handleNext = () => {
     setCurrentVideoIndex((prevIndex) =>
       prevIndex === videos.length - 1 ? 0 : prevIndex + 1
     );
-    if (!recordedAudio) {
+    if (!isRecording) {
       handleStart();
     }
-  };
-
-  const handleAudioStop = (data) => {
-    setRecordedAudio(data);
-    sendRecording(data); // Send the recording once it's stopped
   };
 
   const sendRecording = async (audioBlob) => {
@@ -54,18 +58,48 @@ const VideoPlayer = () => {
     }
   };
 
-  useEffect(() => {
-    // Set up the interval to send the audio every 5 seconds
-    if (recordedAudio) {
-      const id = setInterval(() => {
-        sendRecording(recordedAudio);
-      }, 5000);
-      setIntervalId(id);
+  const saveRecordingLocally = async (audioBlob) => {
+    const file = new File([audioBlob], "recording.wav", {
+      type: "audio/wav",
+    });
+    console.log(file);
 
-      // Clear the interval on component unmount
-      return () => clearInterval(id);
+    // Assuming there's a backend API to handle saving the file in the `public/temp` folder
+    const formData = new FormData();
+    console.log(formData);
+    formData.append("file", file);
+
+    try {
+      const response = await axios.post(
+        "http://localhost:5000/save-audio", // Create this API endpoint
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      setFileUrl(response.data.fileUrl); // Assuming the API returns the saved file URL
+      console.log(response.data.fileUrl);
+    } catch (error) {
+      console.error("Error saving recording:", error);
     }
-  }, [recordedAudio]);
+  };
+
+  // Handle "Check Confidence" button click
+  const handleCheckConfidence = () => {
+    if (isRecording) {
+      stopRecording(); // Stop the recording
+    }
+
+    if (recordingBlob) {
+      // Save the recording in public/temp folder
+      saveRecordingLocally(recordingBlob);
+
+      // Send the recording to /predict
+      sendRecording(recordingBlob);
+    }
+  };
 
   return (
     <div style={{ textAlign: "center", overflow: "hidden" }}>
@@ -114,15 +148,27 @@ const VideoPlayer = () => {
         Next
       </button>
 
-      <AudioRecorder
-        onStop={handleAudioStop}
-        onData={(data) => console.log(data)} // Optional: log audio data
-      />
+      {/* Audio Recorder component */}
+      <AudioRecorder onStart={startRecording} onStop={stopRecording} />
+
+      <button
+        onClick={handleCheckConfidence}
+        style={{ marginTop: "20px", padding: "10px 20px" }}
+      >
+        Check Confidence
+      </button>
 
       {prediction && (
         <div style={{ marginTop: "20px" }}>
           <h3>Prediction Result:</h3>
           <p>{prediction}</p>
+        </div>
+      )}
+
+      {fileUrl && (
+        <div style={{ marginTop: "20px" }}>
+          <h3>Saved Audio File URL:</h3>
+          <p>{fileUrl}</p>
         </div>
       )}
     </div>
