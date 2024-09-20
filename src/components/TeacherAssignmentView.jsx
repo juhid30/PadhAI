@@ -28,6 +28,15 @@ const TeacherAssignmentView = () => {
           id: doc.id,
         }));
 
+        // Fetch all students
+        const studentsSnapshot = await getDocs(
+          collection(db, "Student")
+        );
+        const students = studentsSnapshot.docs.reduce((acc, doc) => {
+          acc[doc.id] = doc.data().name; // Assuming each student document has a 'name' field
+          return acc;
+        }, {});
+
         // Map through submitted assignments and match with assignment records
         const assignmentsData = submittedAssignments.map(
           (submittedAssignment) => {
@@ -43,6 +52,7 @@ const TeacherAssignmentView = () => {
               topic: assignmentRecord.topic,
               isLate,
               docURL: submittedAssignment.docURL,
+              studentName: students[submittedAssignment.studentId] || "Unknown", // Get student name
             };
           } 
         );
@@ -65,6 +75,7 @@ const TeacherAssignmentView = () => {
           <tr>
             <th className="border border-blue-300 px-4 py-2">Subject</th>
             <th className="border border-blue-300 px-4 py-2">Topic</th>
+            <th className="border border-blue-300 px-4 py-2">Student Name</th> {/* New column */}
             <th className="border border-blue-300 px-4 py-2">Late Submission</th>
             <th className="border border-blue-300 px-4 py-2">Document</th>
           </tr>
@@ -74,6 +85,7 @@ const TeacherAssignmentView = () => {
             <tr key={index} className="hover:bg-blue-50 transition duration-200">
               <td className="border border-blue-300 px-4 py-2">{assignment.subject}</td>
               <td className="border border-blue-300 px-4 py-2">{assignment.topic}</td>
+              <td className="border border-blue-300 px-4 py-2">{assignment.studentName}</td> {/* Display student name */}
               <td className="border border-blue-300 px-4 py-2">{assignment.isLate ? "Yes" : "No"}</td>
               <td className="border border-blue-300 px-4 py-2">
                 <a
