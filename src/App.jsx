@@ -14,6 +14,8 @@ import Skills from "./components/Skills";
 import TeacherAssignmentView from "./components/TeacherAssignmentView";
 import Test from "./components/test";
 import { BookList } from "./components/BookList";
+import Profile from "./Pages/Profile";
+import DashboardPage from "./Pages/Dashboard";
 
 function App() {
   return (
@@ -21,6 +23,8 @@ function App() {
       <div>
         <Routes>
           <Route path ="/" element={<Login />} />
+          <Route path ="/dashboard" element={<DashboardPage />} />
+          <Route path ="/profile" element={<Profile />} />
           <Route path ="/add-assignment" element={<AddAssignmentForm />} />
           <Route path ="/assignment-submission" element={<AssignmentSubmission />} />
           <Route path="/book-list" element={<BookList />} />

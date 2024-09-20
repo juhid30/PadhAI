@@ -1,21 +1,23 @@
-.background-profile {
-    background-image: url("https://firebasestorage.googleapis.com/v0/b/nfc3-2024.appspot.com/o/pixelcut-export%20(1).jpeg?alt=media&token=fdb8eaad-dfef-463d-b5e8-fbbccdcb7842");
-    background-size: cover;
-    background-position: top;
-    background-repeat: no-repeat;
+.profile-page {
+    max-width: 1200px;
   }
   
-  .glass-overlay-brown {
-    background: rgba(67, 13, 13, 0.3); /* Semi-transparent background */
-    backdrop-filter: blur(10px); /* Blur effect */
-    border-radius: 1.8rem;
-    padding: 2rem;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Shadow effect */
+  .profile-header {
+    margin-bottom: 2rem;
   }
-  .glass-overlay-white {
-    background: rgba(255, 255, 255, 0.5); /* More white and slightly opaque */
-    backdrop-filter: blur(10px); /* Blur effect */
-    border-radius: 1.8rem;
-    padding: 2rem;
-    box-shadow: 0 4px 6px rgba(145, 86, 86, 0.3); /* Slightly lighter shadow effect */
+  
+  .card {
+    padding: 1.5rem;
+    background-color: #f9fafb;
   }
+  
+  .attendance, .interview-prep {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  ul {
+    margin-top: 0.5rem;
+  }
+  
