@@ -1,16 +1,11 @@
+import React from "react"; 
 import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
 import "./App.css";
-import Test from "./components/test";
-import BookList from "./components/BookList.jsx";
-import UploadNotes from "./components/UploadNotes";
-import UploadListing from "./components/UploadListing";
-import ResumeUpload from "./components/ResumeUpload.jsx";
-import { Route, Routes } from "react-router-dom";
-import { BrowserRouter as Router } from "react-router-dom";
-
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Login from "./components/Login.jsx";
+import BookList from "./components/BookList.jsx";
+import UploadNotes from "./components/UploadNotes.jsx";
+import UploadListing from "./components/UploadListing.jsx";
 import AddAssignmentForm from "./components/AddAssignmentForm.jsx";
 import AssignmentSubmission from "./components/AssignmentSubmission.jsx";
 import BorrowedBooksPage from "./components/BorrowedBooksPage.jsx";
@@ -21,18 +16,42 @@ import Notes from "./components/Notes.jsx";
 import PlagiarismChecker from "./components/PlagiarismChecker.jsx";
 import Skills from "./components/Skills.jsx";
 import TeacherAssignmentView from "./components/TeacherAssignmentView.jsx";
+import InternshipFetch from "./components/InternshipFetch.jsx";
+
+
+// Error Boundary Component
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError(error) {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error, errorInfo) {
+    console.error("Error caught in Error Boundary:", error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return <h1>Something went wrong.</h1>;
+    }
+
+    return this.props.children; 
+  }
+}
+
 function App() {
   return (
     <Router>
-      <div>
+      <ErrorBoundary>
         <Routes>
           <Route path="/" element={<Login />} />
-          <Route path="/resume-upload" element={<ResumeUpload />} />
+          {/* <Route path="/resume-upload" element={<ResumeUpload />} /> */}
           <Route path="/add-assignment" element={<AddAssignmentForm />} />
-          <Route
-            path="/assignment-submission"
-            element={<AssignmentSubmission />}
-          />
+          <Route path="/assignment-submission" element={<AssignmentSubmission />} />
           <Route path="/book-list" element={<BookList />} />
           <Route path="/borrowed-books" element={<BorrowedBooksPage />} />
           <Route path="/calendar" element={<Calendar />} />
@@ -42,15 +61,13 @@ function App() {
           {/* <Route path="/rooms" element={<Rooms />} /> */}
           <Route path="/plagiarism-checker" element={<PlagiarismChecker />} />
           <Route path="/skills" element={<Skills />} />
-          <Route
-            path="/teacher-assignment-view"
-            element={<TeacherAssignmentView />}
-          />
-          <Route path="/test" element={<Test />} />
+          <Route path="/teacher-assignment-view" element={<TeacherAssignmentView />} />
+          {/* <Route path="/test" element={<Test />} /> */}
           <Route path="/upload-notes" element={<UploadNotes />} />
           <Route path="/upload-listing" element={<UploadListing />} />
+          <Route path="/internship-fetch" element={<InternshipFetch />} />
         </Routes>
-      </div>
+      </ErrorBoundary>
     </Router>
   );
 }
