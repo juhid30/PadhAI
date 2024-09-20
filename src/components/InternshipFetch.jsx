@@ -1,14 +1,15 @@
-import React, { useEffect, useState } from 'react';
-import { collection, getDocs } from 'firebase/firestore';
-import { db } from '../../firebase';
+import React, { useEffect, useState } from "react";
+import { collection, doc, getDoc, getDocs } from "firebase/firestore";
+import { db } from "../../firebase";
+import SuccessModal from "./SuccessModal";
 
 // Custom Button component
 const Button = ({ children, onClick, disabled, className }) => (
   <button
     className={`px-4 py-2 rounded font-semibold ${
       disabled
-        ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-        : 'bg-indigo-600 text-white hover:bg-indigo-500'
+        ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+        : "bg-indigo-600 text-white hover:bg-indigo-500"
     } ${className}`}
     onClick={onClick}
     disabled={disabled}
@@ -38,22 +39,26 @@ const InternshipFetch = () => {
   const [selectedForCompare, setSelectedForCompare] = useState([]);
   const [showCompareModal, setShowCompareModal] = useState(false);
   const [resumeFile, setResumeFile] = useState(null);
+  const [responseData, setResponseData] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSuccessModal, setIsSuccessModal] = useState(false);
 
   useEffect(() => {
     const fetchInternships = async () => {
       try {
-        const querySnapshot = await getDocs(collection(db, 'InternshipListings'));
-        const internshipsData = querySnapshot.docs.map(doc => ({
+        const querySnapshot = await getDocs(
+          collection(db, "InternshipListings")
+        );
+        const internshipsData = querySnapshot.docs.map((doc) => ({
           id: doc.id,
-          ...doc.data()
+          ...doc.data(),
         }));
         setInternships(internshipsData);
       } catch (error) {
         console.error("Error fetching internship listings: ", error);
       }
     };
-    
+
     fetchInternships();
   }, []);
 
@@ -68,6 +73,10 @@ const InternshipFetch = () => {
     setIsModalOpen(false);
     setSelectedInternship(null);
   };
+  const handleClose = () => {
+    setIsSuccessModal(false);
+    setResponseData(null); // Optional: clear data if you want
+  };
 
   const toggleCompareMode = () => {
     setIsCompareMode(!isCompareMode);
@@ -75,9 +84,9 @@ const InternshipFetch = () => {
   };
 
   const handleCompareSelect = (internship) => {
-    setSelectedForCompare(prev => {
-      if (prev.find(i => i.id === internship.id)) {
-        return prev.filter(i => i.id !== internship.id);
+    setSelectedForCompare((prev) => {
+      if (prev.find((i) => i.id === internship.id)) {
+        return prev.filter((i) => i.id !== internship.id);
       }
       if (prev.length < 2) {
         return [...prev, internship];
@@ -98,7 +107,9 @@ const InternshipFetch = () => {
       Company: ${internship.companyName}
       Description: ${internship.desc}
       Duration: ${internship.duration}
-      Last Date to Apply: ${new Date(internship.lastDateToApply.seconds * 1000).toLocaleDateString()}
+      Last Date to Apply: ${new Date(
+        internship.lastDateToApply.seconds * 1000
+      ).toLocaleDateString()}
       Stipend: ${internship.salary}
     `;
   };
@@ -110,55 +121,97 @@ const InternshipFetch = () => {
 
   const handleSubmitComparison = async () => {
     if (!resumeFile) {
-      alert('Please upload a resume before submitting.');
+      alert("Please upload a resume before submitting.");
       return;
-      
     }
 
     setIsSubmitting(true);
-
+    const studentId = "library-test-student";
     const formData = new FormData();
-    formData.append('resume', resumeFile);
-    formData.append('internships', JSON.stringify(selectedForCompare.map(convertInternshipToString)));
-
+    formData.append("resume", resumeFile);
     try {
-      const response = await fetch('http://localhost:5000/compare_jobs', {
-        method: 'POST',
-        body: formData,
-      });
+      const studentDoc = await getDoc(doc(db, "Student", studentId)); // Adjust the collection name if needed
+      if (studentDoc.exists()) {
+        const studentData = studentDoc.data();
+        const resumeAnalysis = studentData.resume_analysis; // Assuming this field exists
 
-      if (response.ok) {
-        const result = await response.json();
-        alert(`Comparison submitted successfully! ${result.message}`);
-        setShowCompareModal(false);
-        setSelectedForCompare([]);
-        setResumeFile(null);
+        formData.append("resume_analysis", resumeAnalysis);
+
+        // const describeInternship = (internship) => {
+        //   const responsibilities = Array.isArray(internship.desc)
+        //     ? internship.desc.join(", ")
+        //     : "No responsibilities listed";
+
+        //   return `${internship.jobTitle} at ${internship.companyName}, ${internship.duration}. Responsibilities included: ${responsibilities}.`;
+        // };
+        console.log(selectedForCompare[0]["desc"]);
+        if (selectedForCompare.length === 2) {
+          formData.append("job1", selectedForCompare[0]["desc"]);
+          formData.append("job2", selectedForCompare[1]["desc"]);
+        }
+        const response = await fetch("http://localhost:5000/compare_jobs", {
+          method: "POST",
+          body: formData,
+        });
+
+        if (response.ok) {
+          const result = await response.json();
+          console.log(result.response); // Log the result data
+          setResponseData(result.response);
+
+          alert(`Comparison submitted successfully! ${result.message}`);
+          setIsSuccessModal(true);
+          setShowCompareModal(false);
+          setSelectedForCompare([]);
+          setResumeFile(null);
+        } else {
+          const errorData = await response.json();
+          console.error("Error response:", errorData); // Log the error data
+          alert(`Error: ${errorData.message}`);
+        }
       } else {
-        const errorData = await response.json();
-        alert(`Error: ${errorData.message}`);
+        alert("Student data not found.");
       }
     } catch (error) {
-      console.error('Error submitting comparison:', error);
-      alert('An error occurred while submitting the comparison. Please try again.');
+      console.error("Error fetching resume analysis:", error);
+      alert(
+        "An error occurred while fetching resume analysis. Please try again."
+      );
     } finally {
       setIsSubmitting(false);
     }
   };
 
-
   const CompareModal = () => (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
       <div className="bg-white p-8 rounded-lg shadow-lg max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-        <h2 className="text-3xl font-bold text-indigo-900 mb-4">Compare Internships</h2>
+        <h2 className="text-3xl font-bold text-indigo-900 mb-4">
+          Compare Internships
+        </h2>
         <div className="grid grid-cols-2 gap-4 mb-6">
           {selectedForCompare.map((internship, index) => (
             <div key={internship.id} className="border p-4 rounded">
-              <h3 className="text-2xl font-semibold text-indigo-800 mb-2">{internship.title}</h3>
-              <p className="mb-2"><strong>Company:</strong> {internship.companyName}</p>
-              <p className="mb-2"><strong>Description:</strong> {internship.desc}</p>
-              <p className="mb-2"><strong>Duration:</strong> {internship.duration}</p>
-              <p className="mb-2"><strong>Last Date to Apply:</strong> {new Date(internship.lastDateToApply.seconds * 1000).toLocaleDateString()}</p>
-              <p className="mb-2"><strong>Stipend:</strong> {internship.salary}</p>
+              <h3 className="text-2xl font-semibold text-indigo-800 mb-2">
+                {internship.title}
+              </h3>
+              <p className="mb-2">
+                <strong>Company:</strong> {internship.companyName}
+              </p>
+              <p className="mb-2">
+                <strong>Description:</strong> {internship.desc}
+              </p>
+              <p className="mb-2">
+                <strong>Duration:</strong> {internship.duration}
+              </p>
+              <p className="mb-2">
+                <strong>Last Date to Apply:</strong>{" "}
+                {new Date(
+                  internship.lastDateToApply.seconds * 1000
+                ).toLocaleDateString()}
+              </p>
+              <p className="mb-2">
+                <strong>Stipend:</strong> {internship.salary}
+              </p>
             </div>
           ))}
         </div>
@@ -170,14 +223,18 @@ const InternshipFetch = () => {
             accept=".pdf,.doc,.docx"
             className="mb-2"
           />
-          {resumeFile && <p className="text-sm text-green-600">File selected: {resumeFile.name}</p>}
+          {resumeFile && (
+            <p className="text-sm text-green-600">
+              File selected: {resumeFile.name}
+            </p>
+          )}
         </div>
         <div className="flex justify-end space-x-4">
           <Button onClick={handleSubmitComparison} disabled={isSubmitting}>
-            {isSubmitting ? 'Submitting...' : 'Submit Comparison'}
+            {isSubmitting ? "Submitting..." : "Submit Comparison"}
           </Button>
-          <Button 
-            onClick={() => setShowCompareModal(false)} 
+          <Button
+            onClick={() => setShowCompareModal(false)}
             className="bg-gray-300 text-gray-700 hover:bg-gray-400"
             disabled={isSubmitting}
           >
@@ -193,16 +250,16 @@ const InternshipFetch = () => {
       <div className="flex justify-between items-center mb-4">
         <h1 className="text-6xl font-bold text-indigo-800">INTERNSHIPS</h1>
         <Button onClick={toggleCompareMode}>
-          {isCompareMode ? 'Cancel Compare' : 'Compare'}
+          {isCompareMode ? "Cancel Compare" : "Compare"}
         </Button>
       </div>
-      
+
       <hr className="border-t-1 border-indigo-300 mb-9" />
-      
+
       {isCompareMode && (
         <div className="mb-4">
-          <Button 
-            onClick={openCompareModal} 
+          <Button
+            onClick={openCompareModal}
             disabled={selectedForCompare.length !== 2}
           >
             Compare Selected ({selectedForCompare.length}/2)
@@ -211,45 +268,77 @@ const InternshipFetch = () => {
       )}
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-        {internships.map(internship => (
+        {internships.map((internship) => (
           <div
             className="border border-indigo-200 rounded-lg shadow-lg p-6 bg-indigo-50 transition-transform transform hover:scale-105 cursor-pointer relative"
             key={internship.id}
             onClick={() => openModal(internship)}
           >
             {isCompareMode && (
-              <div className="absolute top-2 right-2" onClick={(e) => e.stopPropagation()}>
+              <div
+                className="absolute top-2 right-2"
+                onClick={(e) => e.stopPropagation()}
+              >
                 <Checkbox
-                  checked={selectedForCompare.some(i => i.id === internship.id)}
+                  checked={selectedForCompare.some(
+                    (i) => i.id === internship.id
+                  )}
                   onChange={() => handleCompareSelect(internship)}
-                  disabled={selectedForCompare.length === 2 && !selectedForCompare.some(i => i.id === internship.id)}
+                  disabled={
+                    selectedForCompare.length === 2 &&
+                    !selectedForCompare.some((i) => i.id === internship.id)
+                  }
                 />
               </div>
             )}
-            <h3 className="text-4xl font-semibold text-indigo-800 mb-2">{internship.title}</h3>
-            <p className="text-gray-700 mb-5 text-xl"><strong>Company:</strong> {internship.companyName}</p>
-            <p className="text-indigo-500 text-lg font-semibold"><strong>Stipend offered:</strong> {internship.salary}</p>
+            <h3 className="text-4xl font-semibold text-indigo-800 mb-2">
+              {internship.title}
+            </h3>
+            <p className="text-gray-700 mb-5 text-xl">
+              <strong>Company:</strong> {internship.companyName}
+            </p>
+            <p className="text-indigo-500 text-lg font-semibold">
+              <strong>Stipend offered:</strong> {internship.salary}
+            </p>
           </div>
         ))}
       </div>
-      
+
       {isModalOpen && selectedInternship && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
           <div className="bg-white p-8 rounded-lg shadow-lg max-w-md w-full">
-            <h2 className="text-4xl font-bold text-indigo-900 mb-4">{selectedInternship.title}</h2>
-            <p className="text-lg mb-2"><strong>Company:</strong> {selectedInternship.companyName}</p>
-            <p className="text-lg mb-2"><strong>Description:</strong> {selectedInternship.desc}</p>
-            <p className="text-lg mb-2"><strong>Duration:</strong> {selectedInternship.duration}</p>
-            <p className="text-lg mb-2"><strong>Last Date to Apply:</strong> {new Date(selectedInternship.lastDateToApply.seconds * 1000).toLocaleDateString()}</p>
-            <p className="text-lg mb-4"><strong>Stipend:</strong> {selectedInternship.salary}</p>
-            
-            <Button 
+            <h2 className="text-4xl font-bold text-indigo-900 mb-4">
+              {selectedInternship.title}
+            </h2>
+            <p className="text-lg mb-2">
+              <strong>Company:</strong> {selectedInternship.companyName}
+            </p>
+            <p className="text-lg mb-2">
+              <strong>Description:</strong> {selectedInternship.desc}
+            </p>
+            <p className="text-lg mb-2">
+              <strong>Duration:</strong> {selectedInternship.duration}
+            </p>
+            <p className="text-lg mb-2">
+              <strong>Last Date to Apply:</strong>{" "}
+              {new Date(
+                selectedInternship.lastDateToApply.seconds * 1000
+              ).toLocaleDateString()}
+            </p>
+            <p className="text-lg mb-4">
+              <strong>Stipend:</strong> {selectedInternship.salary}
+            </p>
+
+            <Button
               className="bg-indigo-600 text-white hover:bg-indigo-500 transition-colors"
-              onClick={() => alert('Apply functionality not implemented yet')}
+              onClick={() => alert("Apply functionality not implemented yet")}
             >
               Apply
             </Button>
-            <Button className="ml-4 bg-gray-300 text-gray-700 hover:bg-gray-400" onClick={closeModal}>
+            <Button
+              className="ml-4 bg-gray-300 text-gray-700 hover:bg-gray-400"
+              onClick={closeModal}
+            >
               Close
             </Button>
           </div>
@@ -257,6 +346,9 @@ const InternshipFetch = () => {
       )}
 
       {showCompareModal && <CompareModal />}
+      {isSuccessModal && (
+        <SuccessModal data={responseData} onClose={handleClose} />
+      )}
     </div>
   );
 };
