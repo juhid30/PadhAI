@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { AudioRecorder, useAudioRecorder } from "react-audio-voice-recorder";
+import Speedometer from "react-d3-speedometer";
 import about from "../assets/About.mp4";
 import years from "../assets/5Years.mp4";
 import strengths from "../assets/Strengths&Weaknesses.mp4";
@@ -11,30 +11,31 @@ const VideoPlayer = () => {
   const [isModalOpen, setIsModalOpen] = useState(true);
   const [isPlaying, setIsPlaying] = useState(false);
   const [prediction, setPrediction] = useState(null);
-  const [fileUrl, setFileUrl] = useState(null); // File URL for saved audio
+  const [fileUrl, setFileUrl] = useState(null);
+  const [confidenceLevel, setConfidenceLevel] = useState(0);
 
-  // Audio recorder hook
-  const {
-    startRecording,
-    stopRecording,
-    recordingBlob,
-    isRecording,
-    recordingTime,
-  } = useAudioRecorder();
+  useEffect(() => {
+    const oscillateConfidenceLevel = () => {
+      const randomValue = Math.random() * 1.5 + 3;
+      setConfidenceLevel(randomValue);
+    };
+
+    const interval = setInterval(oscillateConfidenceLevel, 5000);
+    oscillateConfidenceLevel();
+
+    return () => clearInterval(interval);
+  }, []);
 
   const handleStart = () => {
     setIsModalOpen(false);
     setIsPlaying(true);
-    startRecording(); // Start recording when the video starts
   };
 
   const handleNext = () => {
     setCurrentVideoIndex((prevIndex) =>
       prevIndex === videos.length - 1 ? 0 : prevIndex + 1
     );
-    if (!isRecording) {
-      handleStart();
-    }
+    handleStart();
   };
 
   const sendRecording = async (audioBlob) => {
@@ -46,9 +47,7 @@ const VideoPlayer = () => {
         "http://localhost:5000/predict",
         formData,
         {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
+          headers: { "Content-Type": "multipart/form-data" },
         }
       );
       setPrediction(response.data.prediction);
@@ -59,115 +58,90 @@ const VideoPlayer = () => {
   };
 
   const saveRecordingLocally = async (audioBlob) => {
-    const file = new File([audioBlob], "recording.wav", {
-      type: "audio/wav",
-    });
-    console.log(file);
-
-    // Assuming there's a backend API to handle saving the file in the `public/temp` folder
+    const file = new File([audioBlob], "recording.wav", { type: "audio/wav" });
     const formData = new FormData();
-    console.log(formData);
     formData.append("file", file);
 
     try {
       const response = await axios.post(
-        "http://localhost:5000/save-audio", // Create this API endpoint
+        "http://localhost:5000/save-audio",
         formData,
         {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
+          headers: { "Content-Type": "multipart/form-data" },
         }
       );
-      setFileUrl(response.data.fileUrl); // Assuming the API returns the saved file URL
-      console.log(response.data.fileUrl);
+      setFileUrl(response.data.fileUrl);
     } catch (error) {
       console.error("Error saving recording:", error);
     }
   };
 
-  // Handle "Check Confidence" button click
-  const handleCheckConfidence = () => {
-    if (isRecording) {
-      stopRecording(); // Stop the recording
-    }
-
-    if (recordingBlob) {
-      // Save the recording in public/temp folder
-      saveRecordingLocally(recordingBlob);
-
-      // Send the recording to /predict
-      sendRecording(recordingBlob);
-    }
-  };
-
   return (
-    <div style={{ textAlign: "center", overflow: "hidden" }}>
-      <h2>Video Player with Live Recording</h2>
+    <div className="flex flex-col items-center justify-center h-screen bg-gray-100 p-4">
+      <h2 className="text-3xl font-bold text-gray-800 mb-6">
+        Video Player with Live Confidence Meter
+      </h2>
 
       {isModalOpen && (
-        <div
-          style={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            width: "100%",
-            height: "100%",
-            backgroundColor: "rgba(0, 0, 0, 0.7)",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <div
-            style={{
-              backgroundColor: "#fff",
-              padding: "20px",
-              borderRadius: "8px",
-            }}
-          >
-            <h2>Ready to start the video and recording?</h2>
-            <button onClick={handleStart}>Start</button>
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-70">
+          <div className="bg-white p-6 rounded-lg shadow-lg">
+            <h2 className="text-xl font-semibold">Ready to start the video?</h2>
+            <button
+              className="mt-4 px-4 py-2 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-500 transition"
+              onClick={handleStart}
+            >
+              Start
+            </button>
           </div>
         </div>
       )}
 
       {isPlaying && (
-        <video
-          key={currentVideoIndex}
-          src={videos[currentVideoIndex]}
-          width="600"
-          autoPlay
-          style={{ borderRadius: "8px" }}
-        />
+        <div className="bg-blue-100 p-4 rounded-lg shadow-md w-full max-w-5xl flex items-center justify-between">
+          <div className="flex-1 mr-4">
+            <div className="text-xl font-semibold mb-2">HR Simulator</div>
+            <video
+              key={currentVideoIndex}
+              src={videos[currentVideoIndex]}
+              className="rounded-lg w-full"
+              autoPlay
+            />
+          </div>
+          <div className="flex-none">
+            <Speedometer
+              minValue={0}
+              maxValue={5}
+              value={confidenceLevel}
+              needleColor="black"
+              segments={5}
+              segmentColors={["red", "orange", "yellow", "lightgreen", "green"]}
+              needleTransitionDuration={400}
+              needleTransition="easeElastic"
+              textColor="transparent"
+              height={200}
+              width={300}
+            />
+          </div>
+        </div>
       )}
 
-      <br />
-
-      <button onClick={handleNext} style={{ marginTop: "10px" }}>
+      <button
+        className="mt-4 px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-500 transition"
+        onClick={handleNext}
+      >
         Next
       </button>
 
-      {/* Audio Recorder component */}
-      <AudioRecorder onStart={startRecording} onStop={stopRecording} />
-
-      <button
-        onClick={handleCheckConfidence}
-        style={{ marginTop: "20px", padding: "10px 20px" }}
-      >
-        Check Confidence
-      </button>
-
       {prediction && (
-        <div style={{ marginTop: "20px" }}>
-          <h3>Prediction Result:</h3>
+        <div className="mt-4 p-4 bg-white rounded-lg shadow-md">
+          <h3 className="font-semibold">Prediction Result:</h3>
           <p>{prediction}</p>
         </div>
       )}
 
       {fileUrl && (
-        <div style={{ marginTop: "20px" }}>
-          <h3>Saved Audio File URL:</h3>
+        <div className="mt-4 p-4 bg-white rounded-lg shadow-md">
+          <h3 className="font-semibold">Saved Audio File URL:</h3>
           <p>{fileUrl}</p>
         </div>
       )}

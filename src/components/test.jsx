@@ -17,6 +17,7 @@ import React from "react";
 // import AudioRecorder from "./Audio";
 import VideoPlayer from "./VideoPlayer";
 import InternshipFetch from "./InternshipFetch";
+import LibraryDashboard from "./LibraryDashboard";
 
 const Test = () => {
   const studentId = "library-test-student"; // Replace with actual student ID
@@ -24,8 +25,8 @@ const Test = () => {
   return (
     <>
       {/* <AudioRecorder /> */}
-      <InternshipFetch/>
-
+      {/* <InternshipFetch/> */}
+      <LibraryDashboard />
     </>
   );
 };
