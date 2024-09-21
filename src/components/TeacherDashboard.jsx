@@ -1,5 +1,6 @@
 import React from 'react';
 import TeacherSidebar from './TeacherSidebar';
+import Sidebar from './Sidebar';
 
 const TeacherDashboard = () => {
   // Sample schedule data
@@ -32,7 +33,7 @@ const TeacherDashboard = () => {
 
   return (
     <div className='flex w-screen h-screen bg-gradient-to-r from-blue-100 via-white to-gray-100'>
-      {/* Sidebar */}
+      <Sidebar/>
       <div className="flex w-64">
         {/* Add Sidebar if needed */}
       </div>
