@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 import { db } from "../../firebase"; // Your Firebase config file
 import {
   collection,
@@ -12,6 +13,7 @@ const BorrowedBooksPage = () => {
   const [students, setStudents] = useState([]);
   const [expandedStudentId, setExpandedStudentId] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const navigate = useNavigate(); // Use the navigate hook
 
   // Fetch students and filter out those with no borrowed books
   const fetchStudents = async () => {
@@ -70,9 +72,24 @@ const BorrowedBooksPage = () => {
     student.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  // Logout function
+  const handleLogout = () => {
+    localStorage.removeItem("selectedRole"); // Remove selectedRole from localStorage
+    navigate("/"); // Navigate to the login page
+    window.location.reload(); // Reload the page
+  };
+
   return (
     <div className="min-h-screen bg-gray-100 p-4 w-[100%]">
       <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-md p-4">
+        {/* Logout Button */}
+        <button
+          onClick={handleLogout}
+          className="absolute top-4 right-4 bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition"
+        >
+          Logout
+        </button>
+        
         <input
           type="text"
           placeholder="Search by student name..."

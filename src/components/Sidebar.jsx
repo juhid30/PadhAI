@@ -3,7 +3,9 @@ import { useNavigate } from "react-router-dom";
 
 const Sidebar = () => {
   const navigate = useNavigate();
-  const isStudent = true; // Change this to false for teacher routes
+
+  // Retrieve the role from localStorage
+  const role = localStorage.getItem("selectedRole");
 
   const studentRoutes = [
     { path: "/assignment-submission", name: "Assignment Submission" },
@@ -13,7 +15,6 @@ const Sidebar = () => {
     { path: "/calendar", name: "Calendar" },
     { path: "/coding-platform", name: "Coding Platform" },
     { path: "/notes", name: "Notes" },
-    // { path: "/rooms", name: "Rooms" },
     { path: "/skills", name: "Skills" },
     { path: "/roadmap", name: "Roadmap" },
   ];
@@ -26,8 +27,16 @@ const Sidebar = () => {
     { path: "/teacher-assignment-view", name: "Teacher Assignment View" },
   ];
 
-  // Use the appropriate routes based on the user type
-  const routes = isStudent ? studentRoutes : teacherRoutes;
+  // Determine the routes based on the user's role
+  const routes = role === "Student" ? studentRoutes : teacherRoutes || [];
+
+  const handleLogout = () => {
+    // Clear role from local storage
+    localStorage.removeItem("selectedRole");
+    // Navigate to home
+    navigate("/");
+    window.location.reload();
+  };
 
   return (
     <div className="min-h-screen bg-gray-900 text-white w-64 p-5">
@@ -60,7 +69,10 @@ const Sidebar = () => {
 
       {/* Logout */}
       <div className="mt-auto pt-6">
-        <button className="flex items-center space-x-2 p-2 bg-gray-800 rounded-md hover:bg-gray-700 w-full text-left">
+        <button
+          onClick={handleLogout}
+          className="flex items-center space-x-2 p-2 bg-gray-800 rounded-md hover:bg-gray-700 w-full text-left"
+        >
           <span>Logout</span>
         </button>
       </div>

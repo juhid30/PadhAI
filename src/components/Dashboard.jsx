@@ -61,8 +61,7 @@ const Dashboard = () => {
 
   return (
     <div className="flex">
-      {/* Sidebar */}
-      <Sidebar />
+
 
       {/* Main Dashboard Content */}
       <div className="flex-1 bg-gray-100 p-6">
