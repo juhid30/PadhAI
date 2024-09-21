@@ -17,7 +17,7 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
-
+import { useNavigate } from "react-router-dom";
 
 ChartJS.register(
   CategoryScale,
@@ -32,7 +32,7 @@ ChartJS.register(
 const Dashboard = () => {
   const [student, setStudent] = useState(null);
   const studId = "library-test-student";
-
+  const navigate = useNavigate();
   useEffect(() => {
     const fetchStudent = async () => {
       try {
@@ -85,6 +85,9 @@ const Dashboard = () => {
     responsive: true,
     maintainAspectRatio: false,
   };
+  const handleHRSimulatorClick = () => {
+    navigate("/hr"); // Redirect to /hr when the div is clicked
+  };
 
   return (
     <div className="flex">
@@ -120,7 +123,11 @@ const Dashboard = () => {
           <div className="bg-white p-6 h-full w-[70%] rounded-lg shadow-md">
             <CalendarComponent />
           </div>
-          <div className="bg-white p-6 w-[30%] rounded-lg shadow-md flex items-center justify-center">
+          <div
+            className="bg-white p-6 w-[30%] rounded-lg shadow-md flex items-center justify-center cursor-pointer"
+            onClick={handleHRSimulatorClick} // Add click handler here
+          >
+            {" "}
             <img
               src={`https://firebasestorage.googleapis.com/v0/b/webcade2024.appspot.com/o/hr-sim.png?alt=media&token=a753ade0-891c-4352-954d-18c5362df112`}
               alt=""

@@ -61,7 +61,8 @@ export function CalendarComponent() {
 
   useEffect(() => {
     const fetchAssignmentsAndStudentData = async () => {
-      const studentId = localStorage.getItem("studentId");
+      const studentId = "library-test-student";
+      // localStorage.getItem("studentId");
 
       if (studentId) {
         try {
@@ -128,7 +129,7 @@ export function CalendarComponent() {
 
 function Calendar() {
   return (
-    <div className="bg-purple-50 w-[92.5%] h-screen p-9 flex">
+    <div className="bg-purple-50 w-[92.5%] h-[100%] p-9 flex">
       <CalendarComponent />
     </div>
   );
