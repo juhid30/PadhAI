@@ -34,7 +34,7 @@ const TeacherDashboard = () => {
     <div className='flex w-screen h-screen'>
       {/* Sidebar */}
       <div className="flex w-64">
-        <TeacherSidebar />
+      
       </div>
 
       {/* Main Dashboard Section */}

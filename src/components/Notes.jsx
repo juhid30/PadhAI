@@ -23,36 +23,38 @@ const Notes = () => {
   };
 
   return (
-    <div className="p-6 w-[100%]">
-      <h1 className="text-2xl font-semibold mb-4">Student Notes</h1>
-      <div className="overflow-x-auto rounded-t-xl border border-gray-300 ">
-        <table className="min-w-full shadow-md">
-          <thead className="bg-[#3e8efe]">
+    <div className="p-6 w-full bg-purple-50">
+      <h1 className="text-3xl font-bold mb-6 text-purple-900 text-center">
+        Student Notes
+      </h1>
+
+      <div className="overflow-x-auto rounded-lg border border-purple-300 shadow-lg">
+        <table className="min-w-full bg-white rounded-lg shadow-md">
+          <thead className="bg-purple-700 text-white rounded-t-lg">
             <tr className="border-b">
-              <th className="py-4 font-bold px-5 text-left text-gray-700 rounded-tl-lg">
+              <th className="py-4 font-bold px-5 text-left rounded-tl-lg">
                 Subject
               </th>
-              <th className="py-4 font-bold px-5 text-left text-gray-700">
-                Topic
-              </th>
-              <th className="py-4 font-bold px-5 text-left text-gray-700">
-                Accuracy
-              </th>
-              <th className="py-4 font-bold px-5 text-left text-gray-700 rounded-tr-lg">
+              <th className="py-4 font-bold px-5 text-left">Topic</th>
+              <th className="py-4 font-bold px-5 text-left">Accuracy</th>
+              <th className="py-4 font-bold px-5 text-left rounded-tr-lg">
                 Action
               </th>
             </tr>
           </thead>
           <tbody>
             {notes.map((note) => (
-              <tr key={note.id} className="border-b hover:bg-gray-50">
-                <td className="py-4 px-5">{note.subject}</td>
-                <td className="py-4 px-5">{note.topic}</td>
-                <td className="py-4 px-5">{note.accuracy}</td>
+              <tr
+                key={note.id}
+                className="border-b hover:bg-purple-100 transition duration-200"
+              >
+                <td className="py-4 px-5 text-purple-800">{note.subject}</td>
+                <td className="py-4 px-5 text-purple-800">{note.topic}</td>
+                <td className="py-4 px-5 text-purple-800">{note.accuracy}</td>
                 <td className="py-4 px-5">
                   <button
                     onClick={() => handleViewDocument(note.docURL)}
-                    className="text-blue-500 hover:underline"
+                    className="text-purple-600 hover:underline font-semibold"
                   >
                     View
                   </button>
