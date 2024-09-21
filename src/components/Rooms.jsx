@@ -345,7 +345,6 @@ const Rooms = () => {
                 </div>
               </div>
             </div>
-
           </div>
         </div>
       </div>

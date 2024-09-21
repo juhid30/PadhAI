@@ -1,4 +1,4 @@
-import React from "react"; 
+import React from "react";
 import { useState } from "react";
 import "./App.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
@@ -16,6 +16,8 @@ import Notes from "./components/Notes.jsx";
 import PlagiarismChecker from "./components/PlagiarismChecker.jsx";
 import Skills from "./components/Skills.jsx";
 import TeacherAssignmentView from "./components/TeacherAssignmentView.jsx";
+import AudioRecorder from "./components/AudioRecorder.jsx";
+import VideoPlayer from "./components/VideoPlayer.jsx";
 
 // Error Boundary Component
 class ErrorBoundary extends React.Component {
@@ -37,7 +39,7 @@ class ErrorBoundary extends React.Component {
       return <h1>Something went wrong.</h1>;
     }
 
-    return this.props.children; 
+    return this.props.children;
   }
 }
 
@@ -47,9 +49,12 @@ function App() {
       <ErrorBoundary>
         <Routes>
           <Route path="/" element={<Login />} />
-          {/* <Route path="/resume-upload" element={<ResumeUpload />} /> */}
+          <Route path="/hr" element={<VideoPlayer />} />
           <Route path="/add-assignment" element={<AddAssignmentForm />} />
-          <Route path="/assignment-submission" element={<AssignmentSubmission />} />
+          <Route
+            path="/assignment-submission"
+            element={<AssignmentSubmission />}
+          />
           <Route path="/book-list" element={<BookList />} />
           <Route path="/borrowed-books" element={<BorrowedBooksPage />} />
           <Route path="/calendar" element={<Calendar />} />
@@ -59,7 +64,10 @@ function App() {
           {/* <Route path="/rooms" element={<Rooms />} /> */}
           <Route path="/plagiarism-checker" element={<PlagiarismChecker />} />
           <Route path="/skills" element={<Skills />} />
-          <Route path="/teacher-assignment-view" element={<TeacherAssignmentView />} />
+          <Route
+            path="/teacher-assignment-view"
+            element={<TeacherAssignmentView />}
+          />
           {/* <Route path="/test" element={<Test />} /> */}
           <Route path="/upload-notes" element={<UploadNotes />} />
           <Route path="/upload-listing" element={<UploadListing />} />
