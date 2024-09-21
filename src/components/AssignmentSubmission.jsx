@@ -3,7 +3,6 @@ import { db, storage } from "../../firebase";
 import { doc, getDoc, collection, getDocs, setDoc } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
-// Fetch student details based on the student ID
 const getStudentDetails = async (studentId) => {
   try {
     const studentDocRef = doc(db, "Student", studentId);
@@ -21,7 +20,6 @@ const getStudentDetails = async (studentId) => {
   }
 };
 
-// Fetch all assignments
 const getAssignmentsForStudent = async () => {
   try {
     const assignmentsRef = collection(db, "AssignmentRecord");
@@ -162,9 +160,8 @@ const AssignmentSubmission = () => {
   };
 
   return (
-    <div className="p-6 bg-[#e0c6f6] rounded-lg shadow-md w-full overflow-hidden">
-      {/* Pending Assignments */}
-      <section className="mb-6">
+    <div className="p-4 bg-[#e0c6f6] rounded-lg shadow-md w-full overflow-hidden">
+      <section className="mb-4">
         <div
           className="flex justify-between items-center cursor-pointer bg-[#6a5acd] text-white p-2 rounded-lg mb-2 transition duration-300 hover:bg-[#5a4bcd]"
           onClick={() => toggleSection("pending")}
@@ -173,20 +170,16 @@ const AssignmentSubmission = () => {
           <span>{expandedSection === "pending" ? "▲" : "▼"}</span>
         </div>
         {expandedSection === "pending" && (
-          <div className="max-h-32 overflow-auto flex flex-col space-y-4 scrollbar-hide">
+          <div className="max-h-24 overflow-auto flex flex-col space-y-2">
             {pendingAssignments.length > 0 ? (
               pendingAssignments.map((assignment) => (
                 <div
                   key={assignment.id}
-                  className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition duration-300 flex flex-col"
+                  className="bg-white p-2 rounded-lg shadow-md hover:shadow-lg transition duration-300 flex flex-col"
                 >
-                  <h3 className="text-xl font-semibold">{assignment.topic}</h3>
-                  <p>Subject: {assignment.subject}</p>
-                  <p>
-                    Date of Assignment:{" "}
-                    {new Date(assignment.doa).toLocaleDateString()}
-                  </p>
-                  <p>
+                  <h3 className="text-lg font-semibold">{assignment.topic}</h3>
+                  <p className="text-sm">Subject: {assignment.subject}</p>
+                  <p className="text-sm">
                     Due Date:{" "}
                     {assignment.dos
                       ? new Date(
@@ -196,7 +189,7 @@ const AssignmentSubmission = () => {
                   </p>
                   <button
                     onClick={() => handleSubmit(assignment.id)}
-                    className="mt-2 bg-indigo-600 text-white py-2 px-4 rounded transition duration-300 hover:bg-indigo-700"
+                    className="mt-2 bg-indigo-600 text-white py-1 px-2 rounded transition duration-300 hover:bg-indigo-700"
                   >
                     Submit
                   </button>
@@ -209,8 +202,7 @@ const AssignmentSubmission = () => {
         )}
       </section>
 
-      {/* Past Due Assignments */}
-      <section className="mb-6">
+      <section className="mb-4">
         <div
           className="flex justify-between items-center cursor-pointer bg-[#5b5ea6] text-white p-2 rounded-lg mb-2 transition duration-300 hover:bg-[#4b4e96]"
           onClick={() => toggleSection("pastDue")}
@@ -219,20 +211,16 @@ const AssignmentSubmission = () => {
           <span>{expandedSection === "pastDue" ? "▲" : "▼"}</span>
         </div>
         {expandedSection === "pastDue" && (
-          <div className="max-h-32 overflow-auto flex flex-col space-y-4 scrollbar-hide">
+          <div className="max-h-24 overflow-auto flex flex-col space-y-2">
             {pastDueAssignments.length > 0 ? (
               pastDueAssignments.map((assignment) => (
                 <div
                   key={assignment.id}
-                  className="bg-white p-4 rounded-lg shadow-md hover:shadow-lg transition duration-300 flex flex-col"
+                  className="bg-white p-2 rounded-lg shadow-md hover:shadow-lg transition duration-300 flex flex-col"
                 >
-                  <h3 className="text-xl font-semibold">{assignment.topic}</h3>
-                  <p>Subject: {assignment.subject}</p>
-                  <p>
-                    Date of Assignment:{" "}
-                    {new Date(assignment.doa).toLocaleDateString()}
-                  </p>
-                  <p>
+                  <h3 className="text-lg font-semibold">{assignment.topic}</h3>
+                  <p className="text-sm">Subject: {assignment.subject}</p>
+                  <p className="text-sm">
                     Due Date:{" "}
                     {assignment.dos
                       ? new Date(
@@ -242,7 +230,7 @@ const AssignmentSubmission = () => {
                   </p>
                   <button
                     onClick={() => handleSubmit(assignment.id)}
-                    className="mt-2 bg-zinc-500 text-white py-2 px-4 rounded transition duration-300 hover:bg-zinc-600"
+                    className="mt-2 bg-zinc-500 text-white py-1 px-2 rounded transition duration-300 hover:bg-zinc-600"
                   >
                     Submit
                   </button>
@@ -255,8 +243,7 @@ const AssignmentSubmission = () => {
         )}
       </section>
 
-      {/* Submitted Assignments */}
-      <section className="mb-6">
+      <section className="mb-4">
         <div
           className="flex justify-between items-center cursor-pointer bg-[#4e4f7d] text-white p-2 rounded-lg mb-2 transition duration-300 hover:bg-[#3e3e6d]"
           onClick={() => toggleSection("submitted")}
@@ -265,29 +252,20 @@ const AssignmentSubmission = () => {
           <span>{expandedSection === "submitted" ? "▲" : "▼"}</span>
         </div>
         {expandedSection === "submitted" && (
-          <div className="max-h-32 overflow-auto flex flex-col space-y-4 scrollbar-hide">
+          <div className="max-h-24 overflow-auto flex flex-col space-y-2">
             {submittedAssignments.length > 0 ? (
               submittedAssignments.map((assignment) => (
                 <div
                   key={assignment.id}
-                  className="bg-white p-4 rounded-lg shadow-md transition duration-300 flex flex-col"
+                  className="bg-white p-2 rounded-lg shadow-md hover:shadow-lg transition duration-300 flex flex-col"
                 >
-                  <h3 className="text-xl font-semibold">{assignment.topic}</h3>
-                  <p>Subject: {assignment.subject}</p>
-                  <p>
-                    Submitted On:{" "}
-                    {new Date(assignment.submittedOn).toLocaleDateString()}
+                  <h3 className="text-lg font-semibold">{assignment.topic}</h3>
+                  <p className="text-sm">Subject: {assignment.subject}</p>
+                  <p className="text-sm">
+                    Submitted On: {assignment.submittedOn}
                   </p>
-                  <p>
-                    Link:{" "}
-                    <a
-                      href={assignment.documentString}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-indigo-600 underline"
-                    >
-                      View Document
-                    </a>
+                  <p className="text-sm">
+                    Status: {assignment.isLate ? "Late" : "On Time"}
                   </p>
                 </div>
               ))
@@ -298,22 +276,25 @@ const AssignmentSubmission = () => {
         )}
       </section>
 
-      {/* Modal for File Submission */}
       {isModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-          <div className="bg-white rounded-lg p-6 shadow-lg w-11/12 max-w-md">
-            <h2 className="text-xl font-semibold mb-4">Submit Assignment</h2>
-            <input type="file" onChange={handleFileChange} className="mb-4" />
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="bg-white p-4 rounded-lg shadow-lg w-80">
+            <h2 className="text-lg font-semibold">Upload Assignment</h2>
+            <input
+              type="file"
+              onChange={handleFileChange}
+              className="mt-2 mb-4"
+            />
             <div className="flex justify-end">
               <button
                 onClick={handleUpload}
-                className="bg-green-600 text-white py-2 px-4 rounded mr-2"
+                className="bg-indigo-600 text-white py-1 px-2 rounded transition duration-300 hover:bg-indigo-700"
               >
                 Upload
               </button>
               <button
                 onClick={toggleModal}
-                className="bg-red-600 text-white py-2 px-4 rounded"
+                className="bg-red-600 text-white py-1 px-2 rounded transition duration-300 hover:bg-red-700 ml-2"
               >
                 Cancel
               </button>

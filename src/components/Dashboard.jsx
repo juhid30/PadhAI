@@ -73,7 +73,7 @@ const Dashboard = () => {
           {/* Dashboard Grid Layout */}
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
             {/* Example Card 1 */}
-            <div className="bg-white p-6 rounded-lg shadow-md overflow-hidden h-[500px]">
+            <div className="bg-white p-6 rounded-lg shadow-md overflow-hidden h-[400px]">
               {" "}
               {/* Set a specific height */}
               <h2 className="text-lg font-semibold mb-4 text-purple-700">
