@@ -5,7 +5,7 @@ const Sidebar = () => {
   const navigate = useNavigate();
 
   // Retrieve the role from localStorage
-  const role = localStorage.getItem("selectedRole");
+  const role = localStorage.getItem("userRole");
 
   const studentRoutes = [
     { path: "/assignment-submission", name: "Assignment Submission" },
@@ -26,9 +26,19 @@ const Sidebar = () => {
     { path: "/add-assignment", name: "Add Assignment" },
     { path: "/teacher-assignment-view", name: "Teacher Assignment View" },
   ];
+  const librarianRoutes = [
+    { path: "/manage-books", name: "Manage Books" },
+    { path: "/view-borrowers", name: "View Borrowers" },
+    { path: "/lend-books", name: "Lend Books" },
+  ];
 
   // Determine the routes based on the user's role
-  const routes = role === "Student" ? studentRoutes : teacherRoutes || [];
+  const routes =
+    role === "Student"
+      ? studentRoutes
+      : role === "Teacher"
+      ? teacherRoutes
+      : librarianRoutes || [];
 
   const handleLogout = () => {
     // Clear role from local storage
