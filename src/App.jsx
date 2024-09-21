@@ -17,11 +17,6 @@ import InternshipFetch from "./components/InternshipFetch.jsx";
 import Dashboard from "./components/Dashboard.jsx";
 import TeacherDashboard from "./components/TeacherDashboard.jsx";
 import Sidebar from "./components/Sidebar.jsx";
-<<<<<<< HEAD
-import AppliedToInternship from "./components/AppliedToInternship.jsx";
-import BookLendingPage from "./components/BookLendingPage.jsx";
-=======
->>>>>>> f51aa2eee73bdf411f75a5625f966c5b6c94da12
 import { Roadmap } from "./components/Roadmap.jsx";
 import VideoPlayer from "./components/VideoPlayer.jsx";
 import BookLendingPage from "./components/BookLendingPage"
