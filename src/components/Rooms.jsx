@@ -28,54 +28,54 @@ const Rooms = () => {
     return () => unsubscribe();
   }, []);
 
-  function handleLibClick() {
-    setChartLabel("LIBRARY");
+//   function handleLibClick() {
+//     setChartLabel("LIBRARY");
 
-    setMaxCount(20);
-  }
-  function handleSLClick() {
-    setChartLabel("STUDENT LOUNGE");
-    setCount(101);
-    setMaxCount(120);
-  }
-  function handleRRClick() {
-    setChartLabel("READING ROOM");
-    setCount(35);
-    setMaxCount(60);
-  }
+//     setMaxCount(20);
+//   }
+//   function handleSLClick() {
+//     setChartLabel("STUDENT LOUNGE");
+//     setCount(101);
+//     setMaxCount(120);
+//   }
+//   function handleRRClick() {
+//     setChartLabel("READING ROOM");
+//     setCount(35);
+//     setMaxCount(60);
+//   }
 
   const [maxCount, setMaxCount] = useState(20);
 
-  const chartData = {
-    labels: [chartLabel],
-    datasets: [
-      {
-        label: "Count",
-        data: chartLabel === "LIBRARY" ? [libCount] : [count],
-        backgroundColor: "#CDF3F2",
-        hoverBackgroundColor: "#CDF3F2",
-        borderColor: "rgb(94,191,187)",
-        borderWidth: 1,
-        barThickness: 200,
-      },
-    ],
-  };
+//   const chartData = {
+//     labels: [chartLabel],
+//     datasets: [
+//       {
+//         label: "Count",
+//         data: chartLabel === "LIBRARY" ? [libCount] : [count],
+//         backgroundColor: "#CDF3F2",
+//         hoverBackgroundColor: "#CDF3F2",
+//         borderColor: "rgb(94,191,187)",
+//         borderWidth: 1,
+//         barThickness: 200,
+//       },
+//     ],
+//   };
 
-  const chartOptions = {
-    indexAxis: "x",
-    elements: {
-      bar: {
-        borderWidth: 2,
-      },
-    },
-    responsive: true,
-    scales: {
-      y: {
-        suggestedMax: maxCount, // Set the maximum value for the x-axis
-      },
-    },
-    maintainAspectRatio: false,
-  };
+//   const chartOptions = {
+//     indexAxis: "x",
+//     elements: {
+//       bar: {
+//         borderWidth: 2,
+//       },
+//     },
+//     responsive: true,
+//     scales: {
+//       y: {
+//         suggestedMax: maxCount, // Set the maximum value for the x-axis
+//       },
+//     },
+//     maintainAspectRatio: false,
+//   };
 
   return (
     <>
@@ -329,11 +329,11 @@ const Rooms = () => {
               </div>
             </div>
 
-          </div>
-        </div>
-      </div>
-    </>
-  );
-};
+//           </div>
+//         </div>
+//       </div>
+//     </>
+//   );
+// };
 
-export default Rooms;
+// export default Rooms;

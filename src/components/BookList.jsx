@@ -6,8 +6,8 @@ import {
   doc,
   updateDoc,
   getDoc,
+  setDoc,
 } from "firebase/firestore";
-import axios from "axios"; // Use axios for making HTTP requests
 
 const BookCard = ({ book, addToCart, removeFromCart, inCart }) => {
   return (
@@ -71,6 +71,30 @@ const BookList = () => {
     fetchBooks();
   }, []);
 
+  const addRecommendedBooksToLibrary = async (recommendedBooks) => {
+    try {
+      const booksCollection = collection(db, "Library");
+      const existingBooksSnapshot = await getDocs(booksCollection);
+      const existingBooksIds = new Set(existingBooksSnapshot.docs.map(doc => doc.id));
+
+      const newBooksToAdd = recommendedBooks.filter(book => !existingBooksIds.has(book.id));
+
+      if (newBooksToAdd.length > 0) {
+        const promises = newBooksToAdd.map(async (book) => {
+          const docRef = doc(booksCollection, book.id);
+          await setDoc(docRef, book);
+        });
+
+        await Promise.all(promises);
+        console.log("Recommended books added to Library:", newBooksToAdd);
+      } else {
+        console.log("No new recommended books to add.");
+      }
+    } catch (error) {
+      console.error("Error adding recommended books to Library:", error);
+    }
+  };
+
   const getSkillsAndFetchSuggestions = async () => {
     try {
       const studentId = "library-test-student"; // Replace with actual student ID
@@ -82,8 +106,6 @@ const BookList = () => {
           docSnap.data()?.resume_analysis?.response?.resume_evaluation
             ?.key_qualifications_and_experience?.technical_skills || [];
         setSkills(skills);
-
-        // Call the Flask API here to get recommendations (not shown)
       } else {
         console.log("No such document!");
       }
@@ -94,7 +116,6 @@ const BookList = () => {
 
   const fetchStudentData = async () => {
     const studentId = "library-test-student";
-    // localStorage.getItem("studentId");
     if (studentId) {
       const studentRef = doc(db, "Student", studentId);
       const studentSnapshot = await getDoc(studentRef);
@@ -104,6 +125,9 @@ const BookList = () => {
 
         // Fetch recommended books from the student document
         const recommendedBooks = data.recommendedBooks || [];
+
+        // Call the function to add recommended books to the Library
+        await addRecommendedBooksToLibrary(recommendedBooks);
 
         // Combine current books with recommended books, ensuring no duplicates
         setBooks((prevBooks) => {
@@ -134,8 +158,12 @@ const BookList = () => {
 
     if (cart.length < 4) {
       if (!cart.some((item) => item.id === book.id)) {
-        setCart([...cart, book]);
+        setCart((prevCart) => [...prevCart, book]); // Ensure you're spreading the previous cart state
+      } else {
+        alert(`"${book.bookName}" is already in your cart.`);
       }
+    } else {
+      alert("You can only borrow up to 4 books.");
     }
   };
 
@@ -207,18 +235,22 @@ const BookList = () => {
           <div className="mb-6">
             <h2 className="text-xl text-gray-700">Your Skills:</h2>
             {skills.length > 0 ? (
-              <ul>
+              <div className="flex flex-wrap gap-2 mt-2">
                 {skills.map((skill, index) => (
-                  <li key={index} className="text-gray-600">
+                  <span
+                    key={index}
+                    className="bg-gray-200 text-gray-800 py-1 px-3 rounded-full text-sm"
+                  >
                     {skill}
-                  </li>
+                  </span>
                 ))}
-              </ul>
+              </div>
             ) : (
               <p className="text-gray-600">No skills found</p>
             )}
           </div>
 
+          {/* Recommended Books Section */}
           <div className="mb-6">
             <h2 className="text-xl text-gray-700">Recommended Books:</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
@@ -235,6 +267,7 @@ const BookList = () => {
             </div>
           </div>
 
+          {/* Cart Button */}
           <div className="fixed bottom-5 right-5">
             <button
               onClick={() => setShowModal(true)}
@@ -244,6 +277,7 @@ const BookList = () => {
             </button>
           </div>
 
+          {/* Modal for Cart */}
           {showModal && (
             <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center">
               <div className="bg-gray-100 rounded-lg shadow-lg p-8 w-1/2">

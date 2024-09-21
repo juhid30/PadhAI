@@ -42,14 +42,6 @@ const Sidebar = () => {
         </div>
       </div>
 
-      {/* Search */}
-      <div className="mb-6">
-        <input
-          type="text"
-          placeholder="Search..."
-          className="bg-gray-800 w-full p-2 rounded-md placeholder-gray-500 text-white"
-        />
-      </div>
 
       {/* Navigation Links */}
       <nav className="space-y-4">

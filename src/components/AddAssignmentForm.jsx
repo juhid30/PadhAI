@@ -63,7 +63,7 @@ const AddAssignmentForm = () => {
         className="bg-white w-full max-w-md rounded-3xl shadow-lg p-8"
         onSubmit={handleSubmit}
       >
-        <h2 className="text-2xl font-semibold text-center text-indigo-700 mb-6">
+        <h2 className="text-2xl font-semibold text-blue-700 mb-6">
           Add Assignment
         </h2>
 
@@ -73,7 +73,7 @@ const AddAssignmentForm = () => {
           onChange={(e) => setSubject(e.target.value)}
           placeholder="Subject"
           required
-          className="w-full p-4 mb-4 text-indigo-600 border border-indigo-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400"
+          className="w-full p-4 mb-4 text-blue-600 border border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 transition duration-200"
         />
 
         <input
@@ -82,7 +82,7 @@ const AddAssignmentForm = () => {
           onChange={(e) => setAssignmentTopic(e.target.value)}
           placeholder="Assignment Topic"
           required
-          className="w-full p-4 mb-4 text-indigo-600 border border-indigo-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400"
+          className="w-full p-4 mb-4 text-blue-600 border border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 transition duration-200"
         />
 
         <input
@@ -90,13 +90,13 @@ const AddAssignmentForm = () => {
           value={dueDate}
           onChange={(e) => setDueDate(e.target.value)}
           required
-          className="w-full p-4 mb-4 text-indigo-600 border border-indigo-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400"
+          className="w-full p-4 mb-4 text-blue-600 border border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 transition duration-200"
         />
 
         {/* Enhanced Custom File Upload Button */}
         <div className="mb-4">
           <label
-            className="w-full p-4 flex items-center justify-center bg-indigo-100 text-indigo-700 border border-indigo-300 rounded-lg cursor-pointer hover:bg-indigo-200 hover:text-indigo-900 transition-all duration-200"
+            className="w-full p-4 flex items-center justify-center bg-blue-100 text-blue-700 border border-blue-300 rounded-lg cursor-pointer hover:bg-blue-200 hover:text-blue-900 transition-all duration-200"
             htmlFor="file-upload"
           >
             {file ? file.name : "Upload File"}
@@ -113,7 +113,7 @@ const AddAssignmentForm = () => {
           value={year}
           onChange={(e) => setYear(e.target.value)}
           required
-          className="w-full p-4 mb-6 text-indigo-600 border border-indigo-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400"
+          className="w-full p-4 mb-6 text-blue-600 border border-blue-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 transition duration-200"
         >
           <option value="" disabled>
             Select Year
@@ -126,7 +126,7 @@ const AddAssignmentForm = () => {
 
         <button
           type="submit"
-          className="w-full p-4 bg-indigo-400 text-white rounded-lg hover:bg-indigo-500 transition duration-200"
+          className="w-full p-4 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition duration-200"
         >
           Add Assignment
         </button>
