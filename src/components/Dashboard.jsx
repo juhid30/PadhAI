@@ -17,6 +17,7 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
+import { getDoc } from "firebase/firestore";
 
 ChartJS.register(
   CategoryScale,
