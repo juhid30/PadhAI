@@ -59,7 +59,7 @@ const getEvents = async () => {
   }
 };
 
-function CalendarComponent() {
+export function CalendarComponent() {
   const [events, setEvents] = useState([]); // State for calendar events
 
   useEffect(() => {
@@ -111,7 +111,7 @@ function CalendarComponent() {
   }, []);
 
   return (
-    <div className="w-full relative">
+    <div className="w-full h-full relative">
       <Fullcalendar
         plugins={[dayGridPlugin, interactionPlugin]}
         initialView="dayGridMonth"

@@ -17,6 +17,7 @@ import PlagiarismChecker from "./components/PlagiarismChecker.jsx";
 import Skills from "./components/Skills.jsx";
 import TeacherAssignmentView from "./components/TeacherAssignmentView.jsx";
 import InternshipFetch from "./components/InternshipFetch.jsx";
+import Dashboard from "./components/Dashboard.jsx";
 
 // Error Boundary Component
 class ErrorBoundary extends React.Component {
@@ -65,6 +66,7 @@ function App() {
           {/* <Route path="/test" element={<Test />} /> */}
           <Route path="/upload-notes" element={<UploadNotes />} />
           <Route path="/upload-listing" element={<UploadListing />} />
+          <Route path="/dashboard" element={<Dashboard />} />
         </Routes>
       </ErrorBoundary>
     </Router>
