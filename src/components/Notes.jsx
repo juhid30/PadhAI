@@ -23,30 +23,28 @@ const Notes = () => {
   };
 
   return (
-    <div className="p-6 w-full bg-purple-50">
-      <h1 className="text-3xl font-bold mb-6 text-purple-900 text-center">
-        Student Notes
-      </h1>
-      <div className="overflow-x-auto rounded-lg border border-purple-300 shadow-lg">
-        <table className="min-w-full bg-white rounded-lg shadow-md">
-          <thead className="bg-purple-700 text-white rounded-t-lg">
+    <div className="flex flex-col h-screen w-full">
+      {/* Upper Section */}
+      <div className="flex h-[35%] w-full items-center justify-center bg-purple-50 flex-grow">
+        <h1 className="text-[5rem] font-bold text-purple-900 text-center">
+          Student Notes
+        </h1>
+      </div>
+
+      {/* Lower Section */}
+      <div className="overflow-x-auto bg-white flex-grow rounded-lg border border-purple-300 shadow-lg p-6 h-[65%] w-full m-2">
+        <table className="min-w-full">
+          <thead className="bg-purple-700 text-white">
             <tr className="border-b">
-              <th className="py-4 font-bold px-5 text-left rounded-tl-lg">
-                Subject
-              </th>
+              <th className="py-4 font-bold px-5 text-left rounded-tl-lg">Subject</th>
               <th className="py-4 font-bold px-5 text-left">Topic</th>
               <th className="py-4 font-bold px-5 text-left">Accuracy</th>
-              <th className="py-4 font-bold px-5 text-left rounded-tr-lg">
-                Action
-              </th>
+              <th className="py-4 font-bold px-5 text-left rounded-tr-lg">Action</th>
             </tr>
           </thead>
           <tbody>
             {notes.map((note) => (
-              <tr
-                key={note.id}
-                className="border-b hover:bg-purple-100 transition duration-200"
-              >
+              <tr key={note.id} className="border-b hover:bg-purple-100 transition duration-200">
                 <td className="py-4 px-5 text-purple-800">{note.subject}</td>
                 <td className="py-4 px-5 text-purple-800">{note.topic}</td>
                 <td className="py-4 px-5 text-purple-800">{note.accuracy}</td>
