@@ -95,21 +95,23 @@ const BookLendingPage = () => {
                   <img
                     src={book.bookImage}
                     alt={book.bookName}
-                    className="h-full w-full object-fit rounded-lg"
+                    className="h-full w-full object-cover rounded-lg"
                   />
                 </div>
               )}
               <div className="flex-grow">
-                <h3 className="font-semibold text-gray-800 text-lg">
+                <h3 className="font-semibold text-gray-800 text-md leading-snug">
                   {book.bookName}
                 </h3>
-                <p className="text-gray-600">Author: {book.author}</p>
-                <p className="text-gray-600">
+                <p className="text-gray-600 text-sm leading-snug">
+                  Author: {book.author}
+                </p>
+                <p className="text-gray-600 text-sm leading-snug">
                   Available: {book.quantityAvailable}
                 </p>
                 <button
                   onClick={() => handleAddToCart(book)}
-                  className="mt-2 bg-purple-300 text-gray-800 px-4 py-2 rounded hover:bg-purple-400 transition absolute bottom-4 right-4"
+                  className="mt-2 bg-purple-300 text-gray-800 px-3 py-1 rounded hover:bg-purple-400 transition absolute bottom-4 right-4 text-xs"
                 >
                   Borrow
                 </button>
