@@ -1,7 +1,20 @@
 import React from 'react';
-
+import { useNavigate } from 'react-router-dom';
 
 const TeacherSidebar = () => {
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    // Clear the selectedRole from local storage
+    localStorage.removeItem('selectedRole');
+    
+    // Navigate to the home page
+    navigate('/');
+    
+    // Reload the window
+    window.location.reload();
+  };
+
   return (
     <div className="min-h-screen bg-gray-900 text-white w-64 p-5">
       {/* Logo and User Info */}
@@ -14,7 +27,6 @@ const TeacherSidebar = () => {
           <p className="text-sm text-gray-400">Web developer</p>
         </div>
       </div>
-
 
       {/* Navigation Links */}
       <nav className="space-y-4">
@@ -46,10 +58,10 @@ const TeacherSidebar = () => {
 
       {/* Logout */}
       <div className="mt-auto pt-6">
-        <a href="#logout" className="flex items-center space-x-2 p-2 bg-gray-800 rounded-md hover:bg-gray-700">
+        <button onClick={handleLogout} className="flex items-center space-x-2 p-2 bg-gray-800 rounded-md hover:bg-gray-700 w-full text-left">
           <i className="ri-logout-box-line"></i>
           <span>Logout</span>
-        </a>
+        </button>
       </div>
     </div>
   );
