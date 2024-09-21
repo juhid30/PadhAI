@@ -38,15 +38,22 @@ const VideoPlayer = () => {
 
   const startWebcam = async () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({
+      // Get only the video stream, no audio
+      const videoStream = await navigator.mediaDevices.getUserMedia({
         video: true,
-        audio: true,
+        audio: false, // Disable audio
       });
+
       if (webcamRef.current) {
-        webcamRef.current.srcObject = stream;
+        webcamRef.current.srcObject = videoStream;
       }
 
-      const recorder = new MediaRecorder(stream);
+      // Now get a separate stream for audio only
+      const audioStream = await navigator.mediaDevices.getUserMedia({
+        audio: true, // Only audio
+      });
+
+      const recorder = new MediaRecorder(audioStream);
       recorder.ondataavailable = (event) => {
         if (event.data.size > 0) {
           setAudioChunks((prev) => [...prev, event.data]);
@@ -122,7 +129,7 @@ const VideoPlayer = () => {
       )}
 
       {isPlaying && (
-        <div className="flex w-full max-w-6xl bg-blue-100 p-6 rounded-lg shadow-xl space-x-4">
+        <div className="flex w-full bg-red-900 max-w-6xl bg-blue-100 p-2 rounded-lg shadow-xl space-x-4">
           <div className="flex-1">
             <video
               key={currentVideoIndex}
@@ -153,8 +160,8 @@ const VideoPlayer = () => {
           needleTransitionDuration={400}
           needleTransition="easeElastic"
           textColor="transparent"
-          height={220}
-          width={320}
+          height={100}
+          width={220}
         />
       </div>
 
