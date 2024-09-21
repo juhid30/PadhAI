@@ -1,4 +1,4 @@
-import React from "react"; 
+import React from "react";
 import { useState } from "react";
 import "./App.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
@@ -16,12 +16,15 @@ import Notes from "./components/Notes.jsx";
 import PlagiarismChecker from "./components/PlagiarismChecker.jsx";
 import Skills from "./components/Skills.jsx";
 import TeacherAssignmentView from "./components/TeacherAssignmentView.jsx";
+import AudioRecorder from "./components/AudioRecorder.jsx";
+import VideoPlayer from "./components/VideoPlayer.jsx";
 import InternshipFetch from "./components/InternshipFetch.jsx";
 import Dashboard from "./components/Dashboard.jsx";
 // import Rooms from "./components/Rooms.jsx";
 import TeacherDashboard from "./components/TeacherDashboard.jsx";
 
 import AppliedToInternship from "./components/AppliedToInternship.jsx";
+import BookLendingPage from "./components/BookLendingPage.jsx";
 
 // Error Boundary Component
 class ErrorBoundary extends React.Component {
@@ -43,41 +46,53 @@ class ErrorBoundary extends React.Component {
       return <h1>Something went wrong.</h1>;
     }
 
-    return this.props.children; 
+    return this.props.children;
   }
 }
 
 function App() {
+  const isStudent = true; // Change this to false for teacher routes
+
   return (
-    <Router>
-      <ErrorBoundary>
+    <div className="maindiv flex flex-row" style={{ width: "100%" }}>
+      <Router>
+        <Sidebar className="sidebar" />
         <Routes>
           <Route path="/" element={<Login />} />
-          {/* <Route path="/resume-upload" element={<ResumeUpload />} /> */}
+          <Route path="/hr" element={<VideoPlayer />} />
           <Route path="/add-assignment" element={<AddAssignmentForm />} />
-          <Route path="/assignment-submission" element={<AssignmentSubmission />} />
+          <Route
+            path="/assignment-submission"
+            element={<AssignmentSubmission />}
+          />
           <Route path="/book-list" element={<BookList />} />
           <Route path="/borrowed-books" element={<BorrowedBooksPage />} />
           <Route path="/calendar" element={<Calendar />} />
           <Route path="/coding-platform" element={<CodingPlatform />} />
           <Route path="/exam-scheduler" element={<ExamScheduler />} />
           <Route path="/notes" element={<Notes />} />
-          <Route path="/internship-fetch" element={<InternshipFetch/>}/>
+          <Route path="/internship-fetch" element={<InternshipFetch />} />
+          <Route path="/book-lending" element={<BookLendingPage />} />
           {/* <Route path="/rooms" element={<Rooms />} /> */}
           <Route path="/plagiarism-checker" element={<PlagiarismChecker />} />
           <Route path="/skills" element={<Skills />} />
-          <Route path="/teacher-assignment-view" element={<TeacherAssignmentView />} />
+          <Route
+            path="/teacher-assignment-view"
+            element={<TeacherAssignmentView />}
+          />
           {/* <Route path="/test" element={<Test />} /> */}
           <Route path="/upload-notes" element={<UploadNotes />} />
           <Route path="/upload-listing" element={<UploadListing />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/tr-dashboard" element={<TeacherDashboard />} />
           <Route path="/apply-internship" element={<InternshipFetch />} />
-          <Route path="/applied-to-internship" element={<AppliedToInternship />} />
-
+          <Route
+            path="/applied-to-internship"
+            element={<AppliedToInternship />}
+          />
         </Routes>
-      </ErrorBoundary>
-    </Router>
+      </Router>
+    </div>
   );
 }
 
