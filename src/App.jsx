@@ -18,6 +18,12 @@ import Skills from "./components/Skills.jsx";
 import TeacherAssignmentView from "./components/TeacherAssignmentView.jsx";
 import AudioRecorder from "./components/AudioRecorder.jsx";
 import VideoPlayer from "./components/VideoPlayer.jsx";
+import InternshipFetch from "./components/InternshipFetch.jsx";
+import Dashboard from "./components/Dashboard.jsx";
+// import Rooms from "./components/Rooms.jsx";
+import TeacherDashboard from "./components/TeacherDashboard.jsx";
+
+import AppliedToInternship from "./components/AppliedToInternship.jsx";
 
 // Error Boundary Component
 class ErrorBoundary extends React.Component {
@@ -61,6 +67,7 @@ function App() {
           <Route path="/coding-platform" element={<CodingPlatform />} />
           <Route path="/exam-scheduler" element={<ExamScheduler />} />
           <Route path="/notes" element={<Notes />} />
+          <Route path="/internship-fetch" element={<InternshipFetch/>}/>
           {/* <Route path="/rooms" element={<Rooms />} /> */}
           <Route path="/plagiarism-checker" element={<PlagiarismChecker />} />
           <Route path="/skills" element={<Skills />} />
@@ -71,6 +78,11 @@ function App() {
           {/* <Route path="/test" element={<Test />} /> */}
           <Route path="/upload-notes" element={<UploadNotes />} />
           <Route path="/upload-listing" element={<UploadListing />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/tr-dashboard" element={<TeacherDashboard />} />
+          <Route path="/apply-internship" element={<InternshipFetch />} />
+          <Route path="/applied-to-internship" element={<AppliedToInternship />} />
+
         </Routes>
       </ErrorBoundary>
     </Router>
