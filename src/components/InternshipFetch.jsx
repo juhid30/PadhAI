@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { collection, doc, getDoc, getDocs } from "firebase/firestore";
+import { collection, doc, getDoc, getDocs, setDoc } from "firebase/firestore";
 import { db } from "../../firebase";
 
 // SuccessModal Component
@@ -134,6 +134,7 @@ const InternshipFetch = () => {
   const [responseData, setResponseData] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccessModal, setIsSuccessModal] = useState(false);
+  const studentId = "library-test-student"; // Adjust this as needed
 
   useEffect(() => {
     const fetchInternships = async () => {
@@ -170,6 +171,33 @@ const InternshipFetch = () => {
     setResponseData(null);
   };
 
+  const applyToInternship = async () => {
+    if (!resumeFile) {
+      alert("Please upload your resume before applying.");
+      return;
+    }
+
+    try {
+      const resumeLink = resumeFile.name; // Adjust this after uploading to storage
+      const applicationData = {
+        studentId,
+        internshipId: selectedInternship.id,
+        resumeLink,
+      };
+
+      // Upload application data to Firestore
+      const docRef = doc(collection(db, "AppliedToInternship"));
+      await setDoc(docRef, applicationData);
+
+      alert("Application submitted successfully!");
+      setIsModalOpen(false);
+      setResumeFile(null); // Optionally clear the uploaded resume file
+    } catch (error) {
+      console.error("Error applying for internship: ", error);
+      alert("An error occurred while submitting your application. Please try again.");
+    }
+  };
+
   const toggleCompareMode = () => {
     setIsCompareMode(!isCompareMode);
     setSelectedForCompare([]);
@@ -193,67 +221,9 @@ const InternshipFetch = () => {
     }
   };
 
-  const handleSubmitComparison = async () => {
-    setIsSubmitting(true);
-    const studentId = "library-test-student";
-    try {
-      const studentDoc = await getDoc(doc(db, "Student", studentId));
-      if (studentDoc.exists()) {
-        const studentData = studentDoc.data();
-        const resumeAnalysis = studentData.resume_analysis;
-
-        const formData = new FormData();
-        formData.append("resume_analysis", resumeAnalysis);
-
-        if (selectedForCompare.length === 2) {
-          formData.append("job1", selectedForCompare[0]["desc"]);
-          formData.append("job2", selectedForCompare[1]["desc"]);
-
-          const response = await fetch("http://localhost:5000/compare_jobs", {
-            method: "POST",
-            body: formData,
-          });
-
-          if (response.ok) {
-            const result = await response.json();
-            console.log("Comparison result:", result); // Debug log
-            setResponseData(result.response);
-            setIsSuccessModal(true);
-            console.log("isSuccessModal set to true"); // Debug log
-            setShowCompareModal(false);
-            setSelectedForCompare([]);
-          } else {
-            const errorData = await response.json();
-            console.error("Error response:", errorData);
-            alert(`Error: ${errorData.message}`);
-          }
-        }
-      } else {
-        alert("Student data not found.");
-      }
-    } catch (error) {
-      console.error("Error fetching resume analysis:", error);
-      alert("An error occurred while fetching resume analysis. Please try again.");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const handleApply = async () => {
-    setIsSubmitting(true);
-    try {
-      // Here you would typically send an application to your backend
-      // For now, we'll just simulate a successful application
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      setResponseData("Your application has been submitted successfully!");
-      setIsSuccessModal(true);
-      closeModal();
-    } catch (error) {
-      console.error("Error submitting application:", error);
-      alert("An error occurred while submitting your application. Please try again.");
-    } finally {
-      setIsSubmitting(false);
-    }
+  const handleResumeUpload = (event) => {
+    const file = event.target.files[0];
+    setResumeFile(file);
   };
 
   const CompareModal = () => (
@@ -269,16 +239,25 @@ const InternshipFetch = () => {
               <p className="mb-2"><strong>Company:</strong> {internship.companyName}</p>
               <p className="mb-2"><strong>Description:</strong> {internship.desc}</p>
               <p className="mb-2"><strong>Duration:</strong> {internship.duration}</p>
-              <p className="mb-2">
-                <strong>Last Date to Apply:</strong>{" "}
-                {new Date(internship.lastDateToApply.seconds * 1000).toLocaleDateString()}
-              </p>
+              <p className="mb-2"><strong>Last Date to Apply:</strong> {new Date(internship.lastDateToApply.seconds * 1000).toLocaleDateString()}</p>
               <p className="mb-2"><strong>Stipend:</strong> {internship.salary}</p>
             </div>
           ))}
         </div>
+        <div className="mb-6">
+          <h3 className="text-xl font-semibold mb-2">Upload Your Resume</h3>
+          <input
+            type="file"
+            onChange={handleResumeUpload}
+            accept=".pdf,.doc,.docx"
+            className="mb-2"
+          />
+          {resumeFile && (
+            <p className="text-sm text-green-600">File selected: {resumeFile.name}</p>
+          )}
+        </div>
         <div className="flex justify-end space-x-4">
-          <Button onClick={handleSubmitComparison} disabled={isSubmitting}>
+          <Button onClick={applyToInternship} disabled={isSubmitting}>
             {isSubmitting ? "Submitting..." : "Submit Comparison"}
           </Button>
           <Button
@@ -356,27 +335,24 @@ const InternshipFetch = () => {
             <h2 className="text-3xl font-bold text-indigo-900 mb-4">
               {selectedInternship.title}
             </h2>
-            <p className="mb-4">
-              <strong>Company:</strong> {selectedInternship.companyName}
-            </p>
-            <p className="mb-4">
-              <strong>Description:</strong> {selectedInternship.desc}
-            </p>
-            <p className="mb-4">
-              <strong>Duration:</strong> {selectedInternship.duration}
-            </p>
-            <p className="mb-4">
-              <strong>Last Date to Apply:</strong>{" "}
-              {new Date(
-                selectedInternship.lastDateToApply.seconds * 1000
-              ).toLocaleDateString()}
-            </p>
-            <p className="mb-4">
-              <strong>Stipend:</strong> {selectedInternship.salary}
-            </p>
+            <p className="mb-2"><strong>Company:</strong> {selectedInternship.companyName}</p>
+            <p className="mb-2"><strong>Description:</strong> {selectedInternship.desc}</p>
+            <p className="mb-2"><strong>Duration:</strong> {selectedInternship.duration}</p>
+            <p className="mb-2"><strong>Last Date to Apply:</strong> {new Date(selectedInternship.lastDateToApply.seconds * 1000).toLocaleDateString()}</p>
+            <p className="mb-2"><strong>Stipend:</strong> {selectedInternship.salary}</p>
+
+            <input
+              type="file"
+              onChange={handleResumeUpload}
+              accept=".pdf,.doc,.docx"
+              className="mb-4"
+            />
+            {resumeFile && (
+              <p className="text-sm text-green-600">File selected: {resumeFile.name}</p>
+            )}
             <div className="flex justify-end space-x-4">
-            <Button onClick={handleApply} disabled={isSubmitting}>
-                {isSubmitting ? "Applying..." : "Apply"}
+              <Button onClick={applyToInternship} disabled={isSubmitting}>
+                {isSubmitting ? "Submitting..." : "Apply"}
               </Button>
               <Button onClick={closeModal} className="bg-gray-300 text-gray-700 hover:bg-gray-400">
                 Close
@@ -387,11 +363,12 @@ const InternshipFetch = () => {
       )}
 
       {showCompareModal && <CompareModal />}
-      
+
       {isSuccessModal && (
-        <div>
-          <SuccessModal data={responseData} onClose={handleClose} />
-        </div>
+        <SuccessModal
+          onClose={handleClose}
+          data={responseData}
+        />
       )}
       
       {/* Debug section */}
@@ -401,4 +378,3 @@ const InternshipFetch = () => {
 };
 
 export default InternshipFetch;
-                
