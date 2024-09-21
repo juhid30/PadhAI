@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Line, Doughnut } from "react-chartjs-2";
 import Sidebar from "./Sidebar";
 import {
@@ -27,6 +27,36 @@ ChartJS.register(
 );
 
 const Dashboard = () => {
+
+  const [student, setStudent] = useState(null);
+  const studId = "library-test-student"
+  console.log(studId);
+
+  useEffect(() => {
+    const fetchStudent = async () => {
+      try {
+        const docRef = doc(db, "Student", studId);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+          setStudent(docSnap.data());
+        } else {
+          console.log("No such document!");
+        }
+      } catch (error) {
+        console.error("Error fetching student data: ", error);
+      }
+
+      
+    };
+
+    fetchStudent();
+  }, []
+  )  
+
+  console.log(student);
+  const ATSRating = student.resume_analysis.response.rating.max_score;
+
   // Sample data for the Line chart (Attendance)
   const attendanceData = {
     labels: ["Week 1", "Week 2", "Week 3", "Week 4"],
@@ -47,7 +77,7 @@ const Dashboard = () => {
     labels: ["ATS Score"],
     datasets: [
       {
-        data: [70, 30],
+        data: [ATSRating, 100-ATSRating],
         backgroundColor: ["#9F7AEA", "#E9D8FD"], // Purple and light lavender
         hoverBackgroundColor: ["#9F7AEA", "#E9D8FD"], // Hover colors
       },
