@@ -14,6 +14,7 @@ import {
 import AssignmentSubmission from "./AssignmentSubmission";
 import CalenderComponent, { CalendarComponent } from "./Calendar";
 import Calendar from "./Calendar";
+import { getDoc } from "firebase/firestore";
 
 // Register Chart.js components
 ChartJS.register(
@@ -30,32 +31,34 @@ const Dashboard = () => {
 
   const [student, setStudent] = useState(null);
   const studId = "library-test-student"
-  console.log(studId);
+  // console.log(studId);
 
-  useEffect(() => {
-    const fetchStudent = async () => {
-      try {
-        const docRef = doc(db, "Student", studId);
-        const docSnap = await getDoc(docRef);
+  // useEffect(() => {
+  //   const fetchStudent = async () => {
+  //     const studId = localStorage.getItem("studentId") || "library-test-student";
+  //     console.log("Fetching student with ID:", studId);
+  
+  //     try {
+  //       const docRef = doc(db, "Student", studId);
+  //       const docSnap = await getDoc(docRef);
+  //       console.log("Document Snapshot:", docSnap);
+  
+  //       if (docSnap.exists()) {
+  //         console.log("Fetched student data:", docSnap.data());
+  //         setStudent(docSnap.data());
+  //       } else {
+  //         console.log("No such document!");
+  //       }
+  //     } catch (error) {
+  //       console.error("Error fetching student data: ", error);
+  //     }
+  //   };
+  
+  //   fetchStudent();
+  // }, []);
+  
 
-        if (docSnap.exists()) {
-          setStudent(docSnap.data());
-        } else {
-          console.log("No such document!");
-        }
-      } catch (error) {
-        console.error("Error fetching student data: ", error);
-      }
-
-      
-    };
-
-    fetchStudent();
-  }, []
-  )  
-
-  console.log(student);
-  const ATSRating = student.resume_analysis.response.rating.max_score;
+  // const ATSRating = student.resume_analysis.response.rating.max_score;
 
   // Sample data for the Line chart (Attendance)
   const attendanceData = {
