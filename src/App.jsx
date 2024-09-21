@@ -18,6 +18,7 @@ import Skills from "./components/Skills.jsx";
 import TeacherAssignmentView from "./components/TeacherAssignmentView.jsx";
 import Dashboard from "./components/Dashboard.jsx";
 // import Rooms from "./components/Rooms.jsx";
+import TeacherDashboard from "./components/TeacherDashboard.jsx";
 
 // Error Boundary Component
 class ErrorBoundary extends React.Component {
@@ -66,6 +67,7 @@ function App() {
           <Route path="/upload-notes" element={<UploadNotes />} />
           <Route path="/upload-listing" element={<UploadListing />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/tr-dashboard" element={<TeacherDashboard />} />
         </Routes>
       </ErrorBoundary>
     </Router>
