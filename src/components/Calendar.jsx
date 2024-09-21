@@ -5,14 +5,13 @@ import interactionPlugin from "@fullcalendar/interaction";
 import { db } from "../../firebase";
 import { doc, getDoc, collection, getDocs } from "firebase/firestore";
 
-// Function to get student details from Firestore
 const getStudentDetails = async (studentId) => {
   try {
     const studentDocRef = doc(db, "Student", studentId);
     const studentSnapshot = await getDoc(studentDocRef);
 
     if (studentSnapshot.exists()) {
-      return studentSnapshot.data(); // Return student data
+      return studentSnapshot.data();
     } else {
       console.error("No student found with the given ID");
       return null;
@@ -23,11 +22,10 @@ const getStudentDetails = async (studentId) => {
   }
 };
 
-// Function to get all assignments
 const getAssignmentsForStudent = async () => {
   try {
     const assignmentsRef = collection(db, "AssignmentRecord");
-    const querySnapshot = await getDocs(assignmentsRef); // Fetch all assignments
+    const querySnapshot = await getDocs(assignmentsRef);
 
     const allAssignments = [];
     querySnapshot.forEach((doc) => {
@@ -41,7 +39,6 @@ const getAssignmentsForStudent = async () => {
   }
 };
 
-// Function to get events from EventScheduling collection
 const getEvents = async () => {
   try {
     const eventsRef = collection(db, "EventScheduling");
@@ -60,42 +57,36 @@ const getEvents = async () => {
 };
 
 export function CalendarComponent() {
-  const [events, setEvents] = useState([]); // State for calendar events
+  const [events, setEvents] = useState([]);
 
   useEffect(() => {
     const fetchAssignmentsAndStudentData = async () => {
-      const studentId = localStorage.getItem("studentId"); // Get studentId from localStorage
+      const studentId = localStorage.getItem("studentId");
 
       if (studentId) {
         try {
-          // Fetch student details using the studentId
           const studentDetails = await getStudentDetails(studentId);
           if (studentDetails) {
-            const studentYear = Number(studentDetails.year); // Convert student's year to a number
+            const studentYear = Number(studentDetails.year);
 
-            // Fetch all assignments
             const allAssignments = await getAssignmentsForStudent();
 
-            // Filter assignments based on the student's year
             const filteredAssignments = allAssignments
               .filter((assignment) => Number(assignment.year) === studentYear)
               .map((assignment) => ({
                 title: assignment.topic,
-                start: assignment.dos.toDate().toISOString(), // Set start date to due date
-                end: assignment.dos.toDate().toISOString(), // Set end date to due date
+                start: assignment.dos.toDate().toISOString(),
+                end: assignment.dos.toDate().toISOString(),
               }));
 
-            // Fetch events from EventScheduling
             const allEvents = await getEvents();
 
-            // Append events to the events array
             const filteredEvents = allEvents.map((event) => ({
               title: event.title,
               start: event.start,
               end: event.end,
             }));
 
-            // Update events state with filtered assignments and events
             setEvents([...filteredAssignments, ...filteredEvents]);
           }
         } catch (error) {
@@ -111,7 +102,7 @@ export function CalendarComponent() {
   }, []);
 
   return (
-    <div className="w-full h-full relative">
+    <div className="w-full h-full relative bg-purple-50 p-4 rounded-lg">
       <Fullcalendar
         plugins={[dayGridPlugin, interactionPlugin]}
         initialView="dayGridMonth"
@@ -121,7 +112,15 @@ export function CalendarComponent() {
           end: "dayGridMonth,timeGridWeek,timeGridDay",
         }}
         height="100%"
-        events={events} // Use the events state for calendar events
+        events={events}
+        buttonText={{
+          today: "Today",
+          prev: "<",
+          next: ">",
+          // Add any other buttons you want to customize here
+        }}
+        className="bg-purple-100 text-purple-800"
+        eventColor="#c4b5e4" // Light purple for events
       />
     </div>
   );
@@ -129,7 +128,7 @@ export function CalendarComponent() {
 
 function Calendar() {
   return (
-    <div className="bg-white w-[92.5%] h-screen p-9 flex w-[100%]">
+    <div className="bg-purple-50 w-[92.5%] h-screen p-9 flex">
       <CalendarComponent />
     </div>
   );

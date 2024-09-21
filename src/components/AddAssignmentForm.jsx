@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { db } from "../../firebase";
 import { collection, addDoc } from "firebase/firestore";
+import { useToast } from "@chakra-ui/react"; // Import useToast from Chakra UI
 
 const AddAssignmentForm = () => {
   const [subject, setSubject] = useState("");
@@ -9,6 +10,8 @@ const AddAssignmentForm = () => {
   const [file, setFile] = useState(null);
   const [teacherId, setTeacherId] = useState(""); // Teacher ID
   const [year, setYear] = useState(""); // Year for the assignment
+
+  const toast = useToast(); // Chakra UI's useToast hook
 
   // Today's date as date of assignment
   const dateOfAssignment = new Date().toISOString().split("T")[0];
@@ -46,6 +49,16 @@ const AddAssignmentForm = () => {
       // Add assignmentData to "AssignmentRecord" collection in Firestore
       await addDoc(collection(db, "AssignmentRecord"), assignmentData);
 
+      // Show success toast
+      toast({
+        title: "Assignment added.",
+        description: "The assignment has been successfully added.",
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+        position: "top-right",
+      });
+
       // Reset form fields
       setSubject("");
       setAssignmentTopic("");
@@ -54,6 +67,16 @@ const AddAssignmentForm = () => {
       setYear("");
     } catch (error) {
       console.error("Error adding assignment: ", error);
+
+      // Show error toast if submission fails
+      toast({
+        title: "Error.",
+        description: "There was an error adding the assignment.",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+        position: "top-right",
+      });
     }
   };
 
