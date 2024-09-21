@@ -16,6 +16,9 @@ import Notes from "./components/Notes.jsx";
 import PlagiarismChecker from "./components/PlagiarismChecker.jsx";
 import Skills from "./components/Skills.jsx";
 import TeacherAssignmentView from "./components/TeacherAssignmentView.jsx";
+import Rooms from "./components/Rooms.jsx";
+import Sidebar from "./components/Sidebar.jsx";
+import { Roadmap } from "./components/Roadmap.jsx";
 
 // Error Boundary Component
 class ErrorBoundary extends React.Component {
@@ -43,11 +46,16 @@ class ErrorBoundary extends React.Component {
 
 function App() {
   return (
+    <div className="maindiv flex flex-row " style={{width:"100%"}}>
+
+      <Sidebar className="sidebar"/>
     <Router>
       <ErrorBoundary>
+
         <Routes>
           <Route path="/" element={<Login />} />
-          <Route path="/resume-upload" element={<ResumeUpload />} />
+          <Route path="/roadmap" element={<Roadmap />} />
+          {/* <Route path="/resume-upload" element={<Resume />} /> */}
           <Route path="/add-assignment" element={<AddAssignmentForm />} />
           <Route path="/assignment-submission" element={<AssignmentSubmission />} />
           <Route path="/book-list" element={<BookList />} />
@@ -56,7 +64,7 @@ function App() {
           <Route path="/coding-platform" element={<CodingPlatform />} />
           <Route path="/exam-scheduler" element={<ExamScheduler />} />
           <Route path="/notes" element={<Notes />} />
-          {/* <Route path="/rooms" element={<Rooms />} /> */}
+          <Route path="/rooms" element={<Rooms />} />
           <Route path="/plagiarism-checker" element={<PlagiarismChecker />} />
           <Route path="/skills" element={<Skills />} />
           <Route path="/teacher-assignment-view" element={<TeacherAssignmentView />} />
@@ -66,6 +74,8 @@ function App() {
         </Routes>
       </ErrorBoundary>
     </Router>
+    </div>
+
   );
 }
 

@@ -2,33 +2,31 @@ import React, { useState, useEffect } from "react";
 import { Bar, Doughnut, Line } from "react-chartjs-2";
 import { Chart as ChartJS } from "chart.js/auto";
 import axios from "axios";
+import Sidebar from "./Sidebar";
+import { db, realtimeDb } from "../../firebase";
+import { onValue, ref } from "firebase/database";
+
 
 const Rooms = () => {
   const [count, setCount] = useState(0);
   const [libCount, setLibCount] = useState(0);
-  const fetchCount = async (e) => {
-    try {
-      const request = await axios.post("http://localhost:8000/get-count", {
-        sys: "lib",
-      });
-      const response = request.data;
-      setLibCount(response.count);
-      // console.log(libCount);
-    } catch (err) {
-      console.error(err.message);
-    }
-  };
-  useEffect(() => {
-    fetchCount();
-    const intervalId = setInterval(() => {
-      fetchCount();
-    }, 5000); // Adjust interval time as needed (e.g., 5000ms for 5 seconds)
-
-    // Cleanup interval when component unmounts
-    return () => clearInterval(intervalId);
-  }, []);
-
   const [chartLabel, setChartLabel] = useState("");
+  const [data, setData] = useState(null);
+
+  useEffect(() => {
+    // Create a reference to the location in the database
+    const dataRef = ref(realtimeDb, "debug_runs"); // Replace 'path_to_data' with your actual database path
+
+    // Setup the listener for real-time data
+    const unsubscribe = onValue(dataRef, (snapshot) => {
+      const value = snapshot.val();
+      console.log("Realtime data: ", value);
+      setData(value); // Update state with the new data
+    });
+
+    // Clean up the listener when the component is unmounted
+    return () => unsubscribe();
+  }, []);
 
   function handleLibClick() {
     setChartLabel("LIBRARY");
@@ -47,19 +45,6 @@ const Rooms = () => {
   }
 
   const [maxCount, setMaxCount] = useState(20);
-  // if(selectLib){
-  //   setCount(10)
-  //   setMaxCount(35)
-  // }
-  // else if(selectRR){
-  //   setCount(35)
-  //   setMaxCount(60)
-  // }
-  // else if(selectSL){
-  //   setCount(75)
-  //   setMaxCount(120)
-
-  // }
 
   const chartData = {
     labels: [chartLabel],
@@ -95,10 +80,8 @@ const Rooms = () => {
   return (
     <>
       <div className="h-[100vh]">
-        <Navbar />
         <div className="flex h-[90%]">
           <div className="w-[7.5%] flex flex-col ">
-            <Sidebar />
           </div>
           <div className=" w-[92.5%] flex">
             {/* GRAPH AND SELECTION */}
