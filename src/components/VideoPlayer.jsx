@@ -20,7 +20,7 @@ const VideoPlayer = () => {
 
   useEffect(() => {
     const oscillateConfidenceLevel = () => {
-      const randomValue = Math.random() * 1.5 + 3;
+      const randomValue = Math.random() * 1.5 + 2.8;
       setConfidenceLevel(randomValue);
     };
 
@@ -129,7 +129,7 @@ const VideoPlayer = () => {
       )}
 
       {isPlaying && (
-        <div className="flex w-full bg-red-900 max-w-6xl bg-blue-100 p-2 rounded-lg shadow-xl space-x-4">
+        <div className="flex w-full max-w-6xl p-2 rounded-lg shadow-xl space-x-4">
           <div className="flex-1">
             <video
               key={currentVideoIndex}
