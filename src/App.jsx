@@ -6,7 +6,6 @@ import Login from "./components/Login.jsx";
 import BookList from "./components/BookList.jsx";
 import UploadNotes from "./components/UploadNotes.jsx";
 import UploadListing from "./components/UploadListing.jsx";
-// import Rooms from "./components/Rooms.jsx";
 import AddAssignmentForm from "./components/AddAssignmentForm.jsx";
 import AssignmentSubmission from "./components/AssignmentSubmission.jsx";
 import BorrowedBooksPage from "./components/BorrowedBooksPage.jsx";
@@ -48,7 +47,7 @@ function App() {
       <ErrorBoundary>
         <Routes>
           <Route path="/" element={<Login />} />
-          {/* <Route path="/resume-upload" element={< />} /> */}
+          <Route path="/resume-upload" element={<ResumeUpload />} />
           <Route path="/add-assignment" element={<AddAssignmentForm />} />
           <Route path="/assignment-submission" element={<AssignmentSubmission />} />
           <Route path="/book-list" element={<BookList />} />

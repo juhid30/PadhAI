@@ -7,6 +7,39 @@ import {
   updateDoc,
   getDoc,
 } from "firebase/firestore";
+import axios from "axios"; // Use axios for making HTTP requests
+
+const BookCard = ({ book, addToCart, removeFromCart, inCart }) => {
+  return (
+    <div className="bg-gray-100 rounded-lg shadow-lg p-4 flex flex-col items-center text-center">
+      <img
+        src={book.bookImage}
+        alt={book.bookName}
+        className="w-24 h-36 object-cover mb-3"
+      />
+      <h2 className="text-lg font-semibold text-gray-800">{book.bookName}</h2>
+      <p className="text-sm text-gray-600">by {book.author}</p>
+      <p className="text-sm text-gray-600">
+        Quantity: {book.quantityAvailable}
+      </p>
+      {inCart ? (
+        <button
+          onClick={removeFromCart}
+          className="mt-4 bg-red-500 text-white py-2 px-4 rounded-full hover:bg-red-600 transition"
+        >
+          Remove from Cart
+        </button>
+      ) : (
+        <button
+          onClick={addToCart}
+          className="mt-4 bg-black text-white py-2 px-4 rounded-full hover:bg-gray-800 transition"
+        >
+          Add to Cart
+        </button>
+      )}
+    </div>
+  );
+};
 
 const BookList = () => {
   const [books, setBooks] = useState([]);
@@ -14,60 +47,82 @@ const BookList = () => {
   const [showModal, setShowModal] = useState(false);
   const [studentBooksBorrowed, setStudentBooksBorrowed] = useState([]);
   const [skills, setSkills] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [recommendationsFetched, setRecommendationsFetched] = useState(false);
 
-  // Fetch the books data from Firestore
   useEffect(() => {
     const fetchBooks = async () => {
-      const booksCollection = collection(db, "Library");
-      const booksSnapshot = await getDocs(booksCollection);
-      const booksList = booksSnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-      setBooks(booksList);
+      setLoading(true);
+      try {
+        const booksCollection = collection(db, "Library");
+        const booksSnapshot = await getDocs(booksCollection);
+        const booksList = booksSnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setBooks(booksList);
+      } catch (error) {
+        console.error("Error fetching books:", error);
+      } finally {
+        setLoading(false);
+      }
     };
 
     fetchBooks();
   }, []);
 
-  // Fetch the student's skills from Firestore
-  async function getSkills() {
-    const studentId = localStorage.getItem("studentId"); // Retrieve the doc ID
-    const docRef = doc(db, "students", studentId);
-    const docSnap = await getDoc(docRef);
+  const getSkillsAndFetchSuggestions = async () => {
+    try {
+      const studentId = "library-test-student"; // Replace with actual student ID
+      const docRef = doc(db, "Student", studentId);
+      const docSnap = await getDoc(docRef);
 
-    if (docSnap.exists()) {
-      const skills =
-        docSnap.data()?.resumeAnalysis?.response?.resume_evaluation
-          ?.technical_skills || [];
-      setSkills(skills); // Store skills in state
-    } else {
-      console.log("No such document!");
+      if (docSnap.exists()) {
+        const skills =
+          docSnap.data()?.resume_analysis?.response?.resume_evaluation
+            ?.key_qualifications_and_experience?.technical_skills || [];
+        setSkills(skills);
+
+        // Call the Flask API here to get recommendations (not shown)
+      } else {
+        console.log("No such document!");
+      }
+    } catch (error) {
+      console.error("Error fetching skills or calling API:", error);
     }
-  }
+  };
 
-  // Fetch the student's borrowed books
   const fetchStudentData = async () => {
-    const studentId = localStorage.getItem("studentId");
+    const studentId = "library-test-student";
+    // localStorage.getItem("studentId");
     if (studentId) {
       const studentRef = doc(db, "Student", studentId);
       const studentSnapshot = await getDoc(studentRef);
       if (studentSnapshot.exists()) {
         const data = studentSnapshot.data();
         setStudentBooksBorrowed(data.booksBorrowed || []);
+
+        // Fetch recommended books from the student document
+        const recommendedBooks = data.recommendedBooks || [];
+
+        // Combine current books with recommended books, ensuring no duplicates
+        setBooks((prevBooks) => {
+          const existingIds = new Set(prevBooks.map((book) => book.id));
+          const uniqueRecommendedBooks = recommendedBooks.filter(
+            (book) => !existingIds.has(book.id)
+          );
+          return [...prevBooks, ...uniqueRecommendedBooks];
+        });
       }
     }
   };
 
-  // Call the getSkills and fetchStudentData when the component mounts
   useEffect(() => {
-    getSkills(); // Fetch skills of the student
-    fetchStudentData(); // Fetch books borrowed by the student
+    getSkillsAndFetchSuggestions();
+    fetchStudentData();
   }, []);
 
-  // Add book to cart (Max 4, only one of each kind)
   const addToCart = (book) => {
-    // Check if the book is already borrowed by the student
     if (
       studentBooksBorrowed.some(
         (borrowedBook) => borrowedBook.bookId === book.id
@@ -84,12 +139,10 @@ const BookList = () => {
     }
   };
 
-  // Remove book from cart
   const removeFromCart = (bookId) => {
     setCart(cart.filter((item) => item.id !== bookId));
   };
 
-  // Handle the "Issue Books" action
   const issueBooks = async () => {
     const studentId = localStorage.getItem("studentId");
     if (!studentId) {
@@ -122,10 +175,10 @@ const BookList = () => {
         ...cart.map((book) => ({
           bookId: book.id,
           bookName: book.bookName,
-          dateOfIssue: new Date().toLocaleDateString("en-GB"), // format: DD/MM/YYYY
+          dateOfIssue: new Date().toLocaleDateString("en-GB"),
           dueDate: new Date(
             new Date().setDate(new Date().getDate() + 7)
-          ).toLocaleDateString("en-GB"), // 7 days later
+          ).toLocaleDateString("en-GB"),
         })),
       ];
 
@@ -134,8 +187,8 @@ const BookList = () => {
       });
 
       alert("Books have been issued!");
-      setCart([]); // Clear cart after issuing books
-      setShowModal(false); // Close modal
+      setCart([]);
+      setShowModal(false);
     } else {
       alert("Student data not found.");
     }
@@ -147,126 +200,89 @@ const BookList = () => {
         Library Books
       </h1>
 
-      {/* Display skills */}
-      <div className="mb-6">
-        <h2 className="text-xl text-gray-700">Your Skills:</h2>
-        {skills.length > 0 ? (
-          <ul>
-            {skills.map((skill, index) => (
-              <li key={index} className="text-gray-600">
-                {skill}
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p className="text-gray-600">No skills found</p>
-        )}
-      </div>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {books.map((book) => (
-          <div
-            key={book.id}
-            className="bg-gray-100 rounded-lg shadow-lg p-4 flex flex-col items-center text-center"
-          >
-            <img
-              src={book.bookImage}
-              alt={book.bookName}
-              className="w-24 h-36 object-cover mb-3"
-            />
-
-            <h2 className="text-lg font-semibold text-gray-800">
-              {book.bookName}
-            </h2>
-            <p className="text-sm text-gray-600">by {book.author}</p>
-            <p className="text-sm text-gray-600">
-              Quantity: {book.quantityAvailable}
-            </p>
-
-            {cart.some((item) => item.id === book.id) ? (
-              <button
-                onClick={() => removeFromCart(book.id)}
-                className="mt-4 bg-red-500 text-white py-2 px-4 rounded-full hover:bg-red-600 transition"
-              >
-                Remove from Cart
-              </button>
-            ) : (
-              <button
-                onClick={() => addToCart(book)}
-                className="mt-4 bg-black text-white py-2 px-4 rounded-full hover:bg-gray-800 transition"
-              >
-                Add to Cart
-              </button>
-            )}
-          </div>
-        ))}
-      </div>
-
-      <div className="fixed bottom-5 right-5">
-        <button
-          onClick={() => setShowModal(true)}
-          className="bg-gray-900 text-white p-4 rounded-full shadow-lg hover:bg-gray-700 transition"
-        >
-          View Cart ({cart.length})
-        </button>
-      </div>
-
-      {/* Modal for Cart */}
-      {showModal && (
-        <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center">
-          <div className="bg-gray-100 rounded-lg shadow-lg p-8 w-1/2">
-            <h2 className="text-xl font-bold mb-4 text-gray-800">Your Cart</h2>
-            {cart.length > 0 ? (
-              <ul className="mb-6">
-                {cart.map((item) => (
-                  <li
-                    key={item.id}
-                    className="flex items-center justify-between mb-2"
-                  >
-                    <div className="flex items-center">
-                      <img
-                        src={item.bookImage}
-                        alt={item.bookName}
-                        className="w-12 h-16 object-cover mr-3"
-                      />
-                      <div>
-                        <p className="text-lg text-gray-800">{item.bookName}</p>
-                        <p className="text-sm text-gray-600">
-                          by {item.author}
-                        </p>
-                      </div>
-                    </div>
-                    <button
-                      onClick={() => removeFromCart(item.id)}
-                      className="bg-red-500 text-white py-1 px-3 rounded hover:bg-red-600 transition"
-                    >
-                      Remove
-                    </button>
+      {loading ? (
+        <p>Loading books...</p>
+      ) : (
+        <>
+          <div className="mb-6">
+            <h2 className="text-xl text-gray-700">Your Skills:</h2>
+            {skills.length > 0 ? (
+              <ul>
+                {skills.map((skill, index) => (
+                  <li key={index} className="text-gray-600">
+                    {skill}
                   </li>
                 ))}
               </ul>
             ) : (
-              <p className="text-gray-600">Your cart is empty.</p>
+              <p className="text-gray-600">No skills found</p>
             )}
+          </div>
 
-            <div className="flex justify-end">
-              {cart.length > 0 && (
+          <div className="mb-6">
+            <h2 className="text-xl text-gray-700">Recommended Books:</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              {books.length === 0 && <p>No recommended books found.</p>}
+              {books.map((book) => (
+                <BookCard
+                  key={book.id}
+                  book={book}
+                  addToCart={() => addToCart(book)}
+                  removeFromCart={() => removeFromCart(book.id)}
+                  inCart={cart.some((item) => item.id === book.id)}
+                />
+              ))}
+            </div>
+          </div>
+
+          <div className="fixed bottom-5 right-5">
+            <button
+              onClick={() => setShowModal(true)}
+              className="bg-gray-900 text-white p-4 rounded-full shadow-lg hover:bg-gray-700 transition"
+            >
+              View Cart ({cart.length})
+            </button>
+          </div>
+
+          {showModal && (
+            <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center">
+              <div className="bg-gray-100 rounded-lg shadow-lg p-8 w-1/2">
+                <h2 className="text-xl font-bold mb-4 text-gray-800">
+                  Your Cart
+                </h2>
+                {cart.length > 0 ? (
+                  <ul className="mb-6">
+                    {cart.map((book) => (
+                      <li key={book.id} className="flex justify-between mb-2">
+                        <span>{book.bookName}</span>
+                        <button
+                          onClick={() => removeFromCart(book.id)}
+                          className="text-red-500"
+                        >
+                          Remove
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p>Your cart is empty.</p>
+                )}
                 <button
                   onClick={issueBooks}
-                  className="bg-blue-500 text-white py-2 px-4 rounded-full hover:bg-blue-600 transition"
+                  className="bg-black text-white py-2 px-4 rounded-full hover:bg-gray-800 transition"
                 >
                   Issue Books
                 </button>
-              )}
-              <button
-                onClick={() => setShowModal(false)}
-                className="ml-4 bg-gray-500 text-white py-2 px-4 rounded-full hover:bg-gray-600 transition"
-              >
-                Close
-              </button>
+                <button
+                  onClick={() => setShowModal(false)}
+                  className="ml-4 bg-gray-400 text-white py-2 px-4 rounded-full hover:bg-gray-500 transition"
+                >
+                  Close
+                </button>
+              </div>
             </div>
-          </div>
-        </div>
+          )}
+        </>
       )}
     </div>
   );

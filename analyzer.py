@@ -54,6 +54,23 @@ def clean_json_string(response):
     
     return json_data
 
+def clean_json_array_string(response):
+    # Remove the backticks and any surrounding whitespace
+    cleaned_response = response.replace("```JSON", "").replace("```", "").strip()
+    
+    try:
+        # Load the JSON data, which is expected to be an array
+        json_data = json.loads(cleaned_response)
+        print(json_data)
+        # Ensure the data is a list
+        if isinstance(json_data, list):
+            return json_data
+        else:
+            print("Expected a JSON array but got:", type(json_data))
+            return None
+    except json.JSONDecodeError as e:
+        print("Error decoding JSON:", e)
+        return None
 
 def get_gemini_response(input_text, pdf_content, prompt):
     model = genai.GenerativeModel('gemini-1.5-flash')
@@ -281,6 +298,58 @@ prompt_for_details = """
 
 """
 
+def get_book_sugg( resume_analysis, prompt):
+    model = genai.GenerativeModel('gemini-pro')
+    response = model.generate_content([ resume_analysis, prompt])
+    return response.text
+
+prompt_for_book_sugg = f"""Hello! I would like you to suggest the top 5 books that can help improve the following skills: skills. For each book, please provide the following details in JSON format as an array:
+
+[
+    {{
+        "author": "(string)",
+        "bookImage": "(string)",
+        "bookName": "(string)",
+        "quantityAvailable": (integer)
+    }},
+    {{
+        "author": "(string)",
+        "bookImage": "(string)",
+        "bookName": "(string)",
+        "quantityAvailable": (integer)
+    }},
+    {{
+        "author": "(string)",
+        "bookImage": "(string)",
+        "bookName": "(string)",
+        "quantityAvailable": (integer)
+    }},
+    {{
+        "author": "(string)",
+        "bookImage": "(string)",
+        "bookName": "(string)",
+        "quantityAvailable": (integer)
+    }},
+    {{
+        "author": "(string)",
+        "bookImage": "(string)",
+        "bookName": "(string)",
+        "quantityAvailable": (integer)
+    }}
+]
+
+Example:
+
+[
+    {{
+        "author": "George RR Martin",
+        "bookImage": "https://m.media-amazon.com/images/I/714ExofeKJL._AC_UF1000,1000_QL80_.jpg",
+        "bookName": "Game of Thrones",
+        "quantityAvailable": 2
+    }}
+]
+
+Thank you!"""
 
 @app.route('/upload', methods=['POST'])
 def upload_file():
@@ -331,6 +400,26 @@ def upload_sugg():
 
     # Return the cleaned and parsed response from the AI
     return jsonify({"response": clean_json_string(response)})
+
+@app.route('/bookSugg', methods=['POST'])
+def get_bookSugg():
+    # Extract text from the request
+    data = request.json
+    skills = data.get('skills', [])
+    print(skills)
+    if not skills:
+      return jsonify({"error": "No skills provided"}), 400
+
+    # Create a prompt based on the skills
+    input_text = ", ".join(skills)
+
+    # Generate AI response based on the skills
+    response = get_book_sugg(input_text, prompt_for_book_sugg)
+    print(response)
+
+    # Return the cleaned and parsed response from the AI
+    return jsonify({"books": clean_json_array_string(response)}), 200
+
 
 @app.route('/compare_jobs', methods=['POST'])
 def compare():
