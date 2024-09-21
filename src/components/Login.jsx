@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { signInWithPopup } from "firebase/auth";
 import { auth, provider, db } from "../../firebase.js";
 import { FaGoogle } from "react-icons/fa";
@@ -17,7 +17,7 @@ const Login = () => {
       const user = result.user;
 
       // Store selected role in local storage
-      localStorage.setItem("selectedRole", role);
+      localStorage.setItem("userRole", role);
 
       if (role === "Student") {
         const studentQuery = query(
@@ -28,49 +28,48 @@ const Login = () => {
 
         if (!studentQuerySnapshot.empty) {
           const docId = studentQuerySnapshot.docs[0].id;
-          console.log("Student DocID: ", docId);
           localStorage.setItem("studentDocId", docId);
-          localStorage.setItem("studentRole", role);
           navigate("/upload-resume");
         } else {
           setShowModal(true);
         }
-      } else if (role === "Recruiter") {
-        const recruiterQuery = query(
-          collection(db, "recruiterData"),
+      } else if (role === "Teacher") {
+        const teacherQuery = query(
+          collection(db, "Teacher"),
           where("email", "==", user.email)
         );
-        const recruiterQuerySnapshot = await getDocs(recruiterQuery);
+        const teacherQuerySnapshot = await getDocs(teacherQuery);
 
-        if (!recruiterQuerySnapshot.empty) {
-          const docId = recruiterQuerySnapshot.docs[0].id;
-          console.log("Recruiter DocID: ", docId);
-          localStorage.setItem("recruiterDocId", docId);
+        if (!teacherQuerySnapshot.empty) {
+          const docId = teacherQuerySnapshot.docs[0].id;
+          localStorage.setItem("teacherId", docId);
         } else {
-          const newRecruiter = await addDoc(collection(db, "recruiterData"), {
+          const newTeacher = await addDoc(collection(db, "Teacher"), {
             email: user.email,
             name: user.displayName,
-            companyName: "",
-            jobsIdsPosted: [],
           });
-          console.log("New Recruiter created with DocID: ", newRecruiter.id);
-          localStorage.setItem("recruiterDocId", newRecruiter.id);
+          localStorage.setItem("teacherId", newTeacher.id);
+        }
+      } else if (role === "Librarian") {
+        const librarianQuery = query(
+          collection(db, "Librarian"),
+          where("email", "==", user.email)
+        );
+        const librarianQuerySnapshot = await getDocs(librarianQuery);
+
+        if (!librarianQuerySnapshot.empty) {
+          const docId = librarianQuerySnapshot.docs[0].id;
+          localStorage.setItem("librarianId", docId);
+        } else {
+          const newLibrarian = await addDoc(collection(db, "Librarian"), {
+            email: user.email,
+            name: user.displayName,
+          });
+          localStorage.setItem("librarianId", newLibrarian.id);
         }
       }
     } catch (error) {
       console.error("Error signing in: ", error);
-    }
-  };
-
-  const handleSignIn = () => {
-    const cookieValue = `userRole=${role}; path=/; max-age=${60 * 60 * 24}`;
-    document.cookie = cookieValue;
-    console.log("Signed in and cookie saved:", cookieValue);
-
-    if (role === "Student") {
-      navigate("/student-dashboard");
-    } else if (role === "Teacher") {
-      navigate("/teacher-dashboard");
     }
   };
 
@@ -89,34 +88,31 @@ const Login = () => {
         <div className="flex items-center justify-center mb-6">
           <button
             className={`px-4 py-2 rounded-l-full transition duration-300 ${
-              role === "Student" ? "bg-black text-white" : "bg-gray-300 text-black"
+              role === "Student"
+                ? "bg-black text-white"
+                : "bg-gray-300 text-black"
             }`}
-            onClick={() => {
-              setRole("Student");
-              localStorage.setItem("selectedRole", "Student");
-            }}
+            onClick={() => setRole("Student")}
           >
             Student
           </button>
           <button
             className={`px-4 py-2 transition duration-300 ${
-              role === "Teacher" ? "bg-black text-white" : "bg-gray-300 text-black"
+              role === "Teacher"
+                ? "bg-black text-white"
+                : "bg-gray-300 text-black"
             }`}
-            onClick={() => {
-              setRole("Teacher");
-              localStorage.setItem("selectedRole", "Teacher");
-            }}
+            onClick={() => setRole("Teacher")}
           >
             Teacher
           </button>
           <button
             className={`px-4 py-2 rounded-r-full transition duration-300 ${
-              role === "Librarian" ? "bg-black text-white" : "bg-gray-300 text-black"
+              role === "Librarian"
+                ? "bg-black text-white"
+                : "bg-gray-300 text-black"
             }`}
-            onClick={() => {
-              setRole("Librarian");
-              localStorage.setItem("selectedRole", "Librarian");
-            }}
+            onClick={() => setRole("Librarian")}
           >
             Librarian
           </button>
@@ -146,16 +142,9 @@ const Login = () => {
 
         <button
           className="w-full py-2 mb-4 bg-gray-700 text-white rounded-md hover:bg-gray-800 transition duration-300"
-          onClick={handleSignIn}
-        >
-          Sign in
-        </button>
-        <button
-          className="w-full py-2 mb-4 flex justify-center items-center bg-gray-800 text-white rounded-md hover:bg-gray-900 transition duration-300"
           onClick={signInWithGoogle}
         >
-          <FaGoogle className="mr-3 h-5 w-5" />
-          Sign in with Google
+          Sign in with Google <FaGoogle className="ml-2" />
         </button>
 
         <div className="text-center w-full">
