@@ -27,6 +27,7 @@ const Notes = () => {
       <h1 className="text-3xl font-bold mb-6 text-purple-900 text-center">
         Student Notes
       </h1>
+
       <div className="overflow-x-auto rounded-lg border border-purple-300 shadow-lg">
         <table className="min-w-full bg-white rounded-lg shadow-md">
           <thead className="bg-purple-700 text-white rounded-t-lg">
