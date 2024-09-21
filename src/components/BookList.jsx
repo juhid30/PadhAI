@@ -9,7 +9,7 @@ import {
   setDoc,
 } from "firebase/firestore";
 
-const BookCard = ({ book, addToCart, removeFromCart, inCart }) => {
+const BookCard = ({ book, onAddToCart, onRemoveFromCart, isInCart }) => {
   return (
     <div className="bg-gray-100 rounded-lg shadow-lg p-4 flex flex-col items-center text-center">
       <img
@@ -22,21 +22,16 @@ const BookCard = ({ book, addToCart, removeFromCart, inCart }) => {
       <p className="text-sm text-gray-600">
         Quantity: {book.quantityAvailable}
       </p>
-      {inCart ? (
-        <button
-          onClick={removeFromCart}
-          className="mt-4 bg-red-500 text-white py-2 px-4 rounded-full hover:bg-red-600 transition"
-        >
-          Remove from Cart
-        </button>
-      ) : (
-        <button
-          onClick={addToCart}
-          className="mt-4 bg-black text-white py-2 px-4 rounded-full hover:bg-gray-800 transition"
-        >
-          Add to Cart
-        </button>
-      )}
+      <button
+        onClick={isInCart ? onRemoveFromCart : onAddToCart}
+        className={`mt-4 py-2 px-4 rounded-full transition ${
+          isInCart
+            ? "bg-red-500 hover:bg-red-600 text-white"
+            : "bg-black hover:bg-gray-800 text-white"
+        }`}
+      >
+        {isInCart ? "Remove from Cart" : "Add to Cart"}
+      </button>
     </div>
   );
 };
@@ -45,125 +40,75 @@ const BookList = () => {
   const [books, setBooks] = useState([]);
   const [cart, setCart] = useState([]);
   const [showModal, setShowModal] = useState(false);
-  const [studentBooksBorrowed, setStudentBooksBorrowed] = useState([]);
   const [skills, setSkills] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [recommendationsFetched, setRecommendationsFetched] = useState(false);
+  const studentId = "library-test-student";
+  // localStorage.getItem("studentId");
 
   useEffect(() => {
-    const fetchBooks = async () => {
-      setLoading(true);
-      try {
-        const booksCollection = collection(db, "Library");
-        const booksSnapshot = await getDocs(booksCollection);
-        const booksList = booksSnapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-        setBooks(booksList);
-      } catch (error) {
-        console.error("Error fetching books:", error);
-      } finally {
-        setLoading(false);
+    //   const fetchBooks = async () => {
+    //     setLoading(true);
+    //     try {
+    //       const booksCollection = collection(db, "Library");
+    //       const booksSnapshot = await getDocs(booksCollection);
+    //       const booksList = booksSnapshot.docs.map((doc) => ({
+    //         id: doc.id,
+    //         ...doc.data(),
+    //       }));
+    //       setBooks(booksList);
+    //     } catch (error) {
+    //       console.error("Error fetching books:", error);
+    //     } finally {
+    //       setLoading(false);
+    //     }
+    //   };
+
+    const fetchStudentData = async () => {
+      if (studentId) {
+        const studentRef = doc(db, "Student", studentId);
+        const studentSnapshot = await getDoc(studentRef);
+        if (studentSnapshot.exists()) {
+          const data = studentSnapshot.data();
+
+          // Fetch recommended books from the student document
+          const recommendedBooks = data.recommendedBooks || [];
+
+          // // Fetch the existing books from Firestore to ensure they're available
+          // const booksCollection = collection(db, "Library");
+          // const booksSnapshot = await getDocs(booksCollection);
+          // const allBooks = booksSnapshot.docs.map((doc) => ({
+          //   id: doc.id,
+          //   ...doc.data(),
+          // }));
+
+          // // Filter recommended books that are available in the library
+          // const availableRecommendedBooks = recommendedBooks.filter((recBook) =>
+          //   allBooks.some((libBook) => libBook.id === recBook.id)
+          // );
+
+          // setBooks((prevBooks) => [...prevBooks, ...availableRecommendedBooks]);
+
+          setSkills(
+            data.resume_analysis?.response?.resume_evaluation
+              ?.key_qualifications_and_experience?.technical_skills || []
+          );
+        }
       }
     };
 
-    fetchBooks();
-  }, []);
-
-  const addRecommendedBooksToLibrary = async (recommendedBooks) => {
-    try {
-      const booksCollection = collection(db, "Library");
-      const existingBooksSnapshot = await getDocs(booksCollection);
-      const existingBooksIds = new Set(existingBooksSnapshot.docs.map(doc => doc.id));
-
-      const newBooksToAdd = recommendedBooks.filter(book => !existingBooksIds.has(book.id));
-
-      if (newBooksToAdd.length > 0) {
-        const promises = newBooksToAdd.map(async (book) => {
-          const docRef = doc(booksCollection, book.id);
-          await setDoc(docRef, book);
-        });
-
-        await Promise.all(promises);
-        console.log("Recommended books added to Library:", newBooksToAdd);
-      } else {
-        console.log("No new recommended books to add.");
-      }
-    } catch (error) {
-      console.error("Error adding recommended books to Library:", error);
-    }
-  };
-
-  const getSkillsAndFetchSuggestions = async () => {
-    try {
-      const studentId = "library-test-student"; // Replace with actual student ID
-      const docRef = doc(db, "Student", studentId);
-      const docSnap = await getDoc(docRef);
-
-      if (docSnap.exists()) {
-        const skills =
-          docSnap.data()?.resume_analysis?.response?.resume_evaluation
-            ?.key_qualifications_and_experience?.technical_skills || [];
-        setSkills(skills);
-      } else {
-        console.log("No such document!");
-      }
-    } catch (error) {
-      console.error("Error fetching skills or calling API:", error);
-    }
-  };
-
-  const fetchStudentData = async () => {
-    const studentId = "library-test-student";
-    if (studentId) {
-      const studentRef = doc(db, "Student", studentId);
-      const studentSnapshot = await getDoc(studentRef);
-      if (studentSnapshot.exists()) {
-        const data = studentSnapshot.data();
-        setStudentBooksBorrowed(data.booksBorrowed || []);
-
-        // Fetch recommended books from the student document
-        const recommendedBooks = data.recommendedBooks || [];
-
-        // Call the function to add recommended books to the Library
-        await addRecommendedBooksToLibrary(recommendedBooks);
-
-        // Combine current books with recommended books, ensuring no duplicates
-        setBooks((prevBooks) => {
-          const existingIds = new Set(prevBooks.map((book) => book.id));
-          const uniqueRecommendedBooks = recommendedBooks.filter(
-            (book) => !existingIds.has(book.id)
-          );
-          return [...prevBooks, ...uniqueRecommendedBooks];
-        });
-      }
-    }
-  };
-
-  useEffect(() => {
-    getSkillsAndFetchSuggestions();
+    // fetchBooks();
     fetchStudentData();
-  }, []);
+  }, [studentId]);
 
   const addToCart = (book) => {
-    if (
-      studentBooksBorrowed.some(
-        (borrowedBook) => borrowedBook.bookId === book.id
-      )
-    ) {
-      alert(`You have already issued "${book.bookName}"`);
-      return;
-    }
-
-    if (cart.length < 4) {
-      if (!cart.some((item) => item.id === book.id)) {
-        setCart((prevCart) => [...prevCart, book]); // Ensure you're spreading the previous cart state
-      } else {
-        alert(`"${book.bookName}" is already in your cart.`);
-      }
+    if (cart.length < 4 && !cart.some((item) => item.id === book.id)) {
+      setCart([...cart, book]);
     } else {
-      alert("You can only borrow up to 4 books.");
+      alert(
+        cart.length >= 4
+          ? "You can only borrow up to 4 books."
+          : `"${book.bookName}" is already in your cart.`
+      );
     }
   };
 
@@ -172,30 +117,16 @@ const BookList = () => {
   };
 
   const issueBooks = async () => {
-    const studentId = localStorage.getItem("studentId");
-    if (!studentId) {
-      alert("Student ID not found.");
-      return;
-    }
-
+    if (!studentId) return alert("Student ID not found.");
     const studentRef = doc(db, "Student", studentId);
     const studentSnapshot = await getDoc(studentRef);
     if (studentSnapshot.exists()) {
       const data = studentSnapshot.data();
       const currentBooksBorrowed = data.booksBorrowed || [];
-
-      if (currentBooksBorrowed.length >= 4) {
-        alert(
-          "You cannot borrow more than 4 books at a time. Please return some books."
-        );
-        return;
-      }
-
       if (currentBooksBorrowed.length + cart.length > 4) {
-        alert(
-          `You can only borrow ${4 - currentBooksBorrowed.length} more book(s)`
+        return alert(
+          `You can only borrow ${4 - currentBooksBorrowed.length} more book(s).`
         );
-        return;
       }
 
       const newBooksBorrowed = [
@@ -210,10 +141,7 @@ const BookList = () => {
         })),
       ];
 
-      await updateDoc(studentRef, {
-        booksBorrowed: newBooksBorrowed,
-      });
-
+      await updateDoc(studentRef, { booksBorrowed: newBooksBorrowed });
       alert("Books have been issued!");
       setCart([]);
       setShowModal(false);
@@ -250,7 +178,6 @@ const BookList = () => {
             )}
           </div>
 
-          {/* Recommended Books Section */}
           <div className="mb-6">
             <h2 className="text-xl text-gray-700">Recommended Books:</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
@@ -259,15 +186,14 @@ const BookList = () => {
                 <BookCard
                   key={book.id}
                   book={book}
-                  addToCart={() => addToCart(book)}
-                  removeFromCart={() => removeFromCart(book.id)}
-                  inCart={cart.some((item) => item.id === book.id)}
+                  onAddToCart={() => addToCart(book)}
+                  onRemoveFromCart={() => removeFromCart(book.id)}
+                  isInCart={cart.some((item) => item.id === book.id)}
                 />
               ))}
             </div>
           </div>
 
-          {/* Cart Button */}
           <div className="fixed bottom-5 right-5">
             <button
               onClick={() => setShowModal(true)}
@@ -277,7 +203,6 @@ const BookList = () => {
             </button>
           </div>
 
-          {/* Modal for Cart */}
           {showModal && (
             <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center">
               <div className="bg-gray-100 rounded-lg shadow-lg p-8 w-1/2">

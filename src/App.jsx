@@ -24,6 +24,7 @@ import Dashboard from "./components/Dashboard.jsx";
 import TeacherDashboard from "./components/TeacherDashboard.jsx";
 
 import AppliedToInternship from "./components/AppliedToInternship.jsx";
+import BookLendingPage from "./components/BookLendingPage.jsx";
 
 // Error Boundary Component
 class ErrorBoundary extends React.Component {
@@ -67,7 +68,8 @@ function App() {
           <Route path="/coding-platform" element={<CodingPlatform />} />
           <Route path="/exam-scheduler" element={<ExamScheduler />} />
           <Route path="/notes" element={<Notes />} />
-          <Route path="/internship-fetch" element={<InternshipFetch/>}/>
+          <Route path="/internship-fetch" element={<InternshipFetch />} />
+          <Route path="/book-lending" element={<BookLendingPage />} />
           {/* <Route path="/rooms" element={<Rooms />} /> */}
           <Route path="/plagiarism-checker" element={<PlagiarismChecker />} />
           <Route path="/skills" element={<Skills />} />
@@ -81,8 +83,10 @@ function App() {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/tr-dashboard" element={<TeacherDashboard />} />
           <Route path="/apply-internship" element={<InternshipFetch />} />
-          <Route path="/applied-to-internship" element={<AppliedToInternship />} />
-
+          <Route
+            path="/applied-to-internship"
+            element={<AppliedToInternship />}
+          />
         </Routes>
       </ErrorBoundary>
     </Router>
