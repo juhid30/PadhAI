@@ -50,7 +50,7 @@ const UploadListing = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100 py-10">
+    <div className="min-h-screen flex items-center justify-center bg-gray-100 py-10 w-[100%]">
       <div className="bg-white shadow-lg rounded-lg p-8 w-full max-w-md">
         <h1 className="text-2xl font-bold mb-6 text-center text-blue-600">
           Post New Internship

@@ -79,7 +79,7 @@ const Rooms = () => {
 
   return (
     <>
-      <div className="h-[100vh]">
+      <div className="h-[100vh] w-[100%]">
         <div className="flex h-[90%]">
           <div className="w-[7.5%] flex flex-col ">
           </div>

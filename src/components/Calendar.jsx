@@ -129,7 +129,7 @@ function CalendarComponent() {
 
 function Calendar() {
   return (
-    <div className="bg-white w-[92.5%] h-screen p-9 flex">
+    <div className="bg-white w-[92.5%] h-screen p-9 flex w-[100%]">
       <CalendarComponent />
     </div>
   );

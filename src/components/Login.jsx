@@ -1,124 +1,24 @@
 import { useState } from "react";
-import { signInWithPopup } from "firebase/auth";
-import { auth, provider, db } from "../../firebase.js";
 import { FaGoogle } from "react-icons/fa";
-import { collection, query, where, getDocs, addDoc } from "firebase/firestore";
-import { useNavigate } from "react-router-dom";
 
-const Login = ({ setUser }) => {
+const Login = () => {
   const [showModal, setShowModal] = useState(false); // Modal state
   const [role, setRole] = useState("Student"); // Role state
-  const navigate = useNavigate();
 
-  const signInWithGoogle = async () => {
-    try {
-      const result = await signInWithPopup(auth, provider);
-      const user = result.user;
-
-      if (role === "Student") {
-        // Student login logic
-        const studentQuery = query(
-          collection(db, "Student"),
-          where("email", "==", user.email)
-        );
-        const studentQuerySnapshot = await getDocs(studentQuery);
-
-        if (!studentQuerySnapshot.empty) {
-          // Student exists
-          const docId = studentQuerySnapshot.docs[0].id;
-          console.log("Student DocID: ", docId);
-          localStorage.setItem("studentDocId", docId);
-          localStorage.setItem("studentRole", role);
-          navigate("/");
-          setUser(user);
-        } else {
-          // Student doesn't exist, ask for resume upload
-          setUser(user);
-          setShowModal(true);
-        }
-      } else if (role === "Teacher") {
-        // Teacher login logic
-        const teacherQuery = query(
-          collection(db, "Teacher"),
-          where("email", "==", user.email)
-        );
-        const teacherQuerySnapshot = await getDocs(teacherQuery);
-
-        if (!teacherQuerySnapshot.empty) {
-          // Teacher exists
-          const docId = teacherQuerySnapshot.docs[0].id;
-          console.log("Teacher DocID: ", docId);
-          localStorage.setItem("teacherDocId", docId);
-          setUser(user);
-        } else {
-          // Teacher doesn't exist, create a new teacher document
-          const newTeacher = await addDoc(collection(db, "teacherData"), {
-            email: user.email,
-            name: user.displayName,
-            subjects: [],
-          });
-          console.log("New Teacher created with DocID: ", newTeacher.id);
-          localStorage.setItem("teacherDocId", newTeacher.id);
-          localStorage.setItem("studentRole", role);
-          setUser(user);
-        }
-      } else if (role === "Librarian") {
-        // Librarian login logic
-        const librarianQuery = query(
-          collection(db, "Librarian"),
-          where("email", "==", user.email)
-        );
-        const librarianQuerySnapshot = await getDocs(librarianQuery);
-
-        if (!librarianQuerySnapshot.empty) {
-          // Librarian exists
-          const docId = librarianQuerySnapshot.docs[0].id;
-          console.log("Librarian DocID: ", docId);
-          localStorage.setItem("librarianDocId", docId);
-          setUser(user);
-        } else {
-          // Librarian doesn't exist, create a new librarian document
-          const newLibrarian = await addDoc(collection(db, "librarianData"), {
-            email: user.email,
-            name: user.displayName,
-            libraryBranch: "",
-          });
-          console.log("New Librarian created with DocID: ", newLibrarian.id);
-          localStorage.setItem("librarianDocId", newLibrarian.id);
-          localStorage.setItem("studentRole", role);
-          setUser(user);
-        }
-      }
-    } catch (error) {
-      console.error("Error signing in: ", error);
-    }
-  };
-
-  const handleResumeUpload = async (e) => {
-    e.preventDefault();
-    if (resume && auth.currentUser) {
-      try {
-        const newStudent = await addDoc(collection(db, "studentData"), {
-          email: auth.currentUser.email,
-          name: auth.currentUser.displayName,
-          resume: resume.name,
-        });
-
-        console.log("New Student created with DocID: ", newStudent.id);
-        localStorage.setItem("studentDocId", newStudent.id);
-        setShowModal(false);
-      } catch (error) {
-        console.error("Error uploading resume: ", error);
-      }
-    }
+  // Function to save cookie
+  const handleSignIn = () => {
+    const cookieValue = `userRole=${role}; path=/; max-age=${60 * 60 * 24}`; // Cookie valid for 1 day
+    document.cookie = cookieValue;
+    console.log("Signed in and cookie saved:", cookieValue);
+    // You can redirect or run additional actions here
   };
 
   return (
-    <div className="flex justify-center items-center h-screen bg-gray-100">
+    <div className="flex justify-center items-center h-screen bg-gray-100 w-[100%]">
       {showModal && (
         <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex justify-center items-center">
           <div className="bg-white p-6 rounded-lg shadow-lg max-w-lg w-full h-[70vh]">
-            <ResumeUpload />
+            {/* ResumeUpload component here */}
           </div>
         </div>
       )}
@@ -184,17 +84,11 @@ const Login = ({ setUser }) => {
           </a>
         </div>
 
-        {/* Sign in with Google */}
-        <button
-          className="w-full py-2 mb-4 flex justify-center items-center bg-gray-800 text-white rounded-md hover:bg-gray-900 transition duration-300"
-          onClick={signInWithGoogle}
-        >
-          <FaGoogle className="mr-3 h-5 w-5" />
-          Sign in with Google
-        </button>
-
         {/* Regular Sign in */}
-        <button className="w-full py-2 mb-4 bg-gray-700 text-white rounded-md hover:bg-gray-800 transition duration-300">
+        <button
+          className="w-full py-2 mb-4 bg-gray-700 text-white rounded-md hover:bg-gray-800 transition duration-300"
+          onClick={handleSignIn}
+        >
           Sign in
         </button>
 

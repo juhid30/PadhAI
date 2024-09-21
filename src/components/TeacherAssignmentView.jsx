@@ -57,7 +57,7 @@ const TeacherAssignmentView = () => {
   }, [db]);
 
   return (
-    <div className="p-6">
+    <div className="p-6 w-[100%]">
       <h2 className="text-2xl font-bold mb-4">Submitted Assignments</h2>
       <table className="min-w-full border-collapse border border-gray-300">
         <thead className="bg-gray-100">
