@@ -1,16 +1,24 @@
 import { useState } from "react";
 import { FaGoogle } from "react-icons/fa";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 
 const Login = () => {
   const [showModal, setShowModal] = useState(false); // Modal state
   const [role, setRole] = useState("Student"); // Role state
+  const navigate = useNavigate(); // Initialize useNavigate hook
 
-  // Function to save cookie
+  // Function to save cookie and navigate to appropriate dashboard
   const handleSignIn = () => {
     const cookieValue = `userRole=${role}; path=/; max-age=${60 * 60 * 24}`; // Cookie valid for 1 day
     document.cookie = cookieValue;
     console.log("Signed in and cookie saved:", cookieValue);
-    // You can redirect or run additional actions here
+
+    // Redirect based on role
+    if (role === "Student") {
+      navigate("/student-dashboard");
+    } else if (role === "Teacher") {
+      navigate("/teacher-dashboard");
+    }
   };
 
   return (

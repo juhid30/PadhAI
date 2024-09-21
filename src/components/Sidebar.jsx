@@ -1,29 +1,29 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import React from "react";
+import { useNavigate } from "react-router-dom";
 
 const Sidebar = () => {
   const navigate = useNavigate();
   const isStudent = true; // Change this to false for teacher routes
 
   const studentRoutes = [
-    { path: '/assignment-submission', name: 'Assignment Submission' },
-    { path: '/plagiarism-checker', name: 'Plagiarism Checker' },
-    { path: '/book-list', name: 'Book List' },
-    { path: '/borrowed-books', name: 'Borrowed Books' },
-    { path: '/calendar', name: 'Calendar' },
-    { path: '/coding-platform', name: 'Coding Platform' },
-    { path: '/notes', name: 'Notes' },
-    { path: '/rooms', name: 'Rooms' },
-    { path: '/skills', name: 'Skills' },
-    { path: '/roadmap', name: 'Roadmap' },
+    { path: "/assignment-submission", name: "Assignment Submission" },
+    { path: "/plagiarism-checker", name: "Plagiarism Checker" },
+    { path: "/book-lending", name: "Book Lending" },
+    { path: "/borrowed-books", name: "Borrowed Books" },
+    { path: "/calendar", name: "Calendar" },
+    { path: "/coding-platform", name: "Coding Platform" },
+    { path: "/notes", name: "Notes" },
+    // { path: "/rooms", name: "Rooms" },
+    { path: "/skills", name: "Skills" },
+    { path: "/roadmap", name: "Roadmap" },
   ];
 
   const teacherRoutes = [
-    { path: '/exam-scheduler', name: 'Exam Scheduler' },
-    { path: '/upload-notes', name: 'Upload Notes' },
-    { path: '/upload-listing', name: 'Upload Listing' },
-    { path: '/add-assignment', name: 'Add Assignment' },
-    { path: '/teacher-assignment-view', name: 'Teacher Assignment View' },
+    { path: "/exam-scheduler", name: "Exam Scheduler" },
+    { path: "/upload-notes", name: "Upload Notes" },
+    { path: "/upload-listing", name: "Upload Listing" },
+    { path: "/add-assignment", name: "Add Assignment" },
+    { path: "/teacher-assignment-view", name: "Teacher Assignment View" },
   ];
 
   // Use the appropriate routes based on the user type
@@ -41,7 +41,6 @@ const Sidebar = () => {
           <p className="text-sm text-gray-400">Web developer</p>
         </div>
       </div>
-
 
       {/* Navigation Links */}
       <nav className="space-y-4">
