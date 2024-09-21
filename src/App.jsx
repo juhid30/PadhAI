@@ -24,6 +24,7 @@ import Dashboard from "./components/Dashboard.jsx";
 import TeacherDashboard from "./components/TeacherDashboard.jsx";
 
 import AppliedToInternship from "./components/AppliedToInternship.jsx";
+import Sidebar from "./components/Sidebar.jsx";
 
 // Error Boundary Component
 class ErrorBoundary extends React.Component {
