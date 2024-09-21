@@ -22,7 +22,7 @@ import InternshipFetch from "./components/InternshipFetch.jsx";
 import Dashboard from "./components/Dashboard.jsx";
 // import Rooms from "./components/Rooms.jsx";
 import TeacherDashboard from "./components/TeacherDashboard.jsx";
-
+import Sidebar from "./components/Sidebar.jsx";
 import AppliedToInternship from "./components/AppliedToInternship.jsx";
 import BookLendingPage from "./components/BookLendingPage.jsx";
 
