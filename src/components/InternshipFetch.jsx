@@ -1,7 +1,99 @@
 import React, { useEffect, useState } from "react";
 import { collection, doc, getDoc, getDocs, setDoc } from "firebase/firestore";
 import { db } from "../../firebase";
-import SuccessModal from "./SuccessModal";
+
+// SuccessModal Component
+const SuccessModal = ({ data, onClose }) => {
+  if (!data) return null;
+
+  const isApplicationSuccess = typeof data === 'string';
+
+  if (isApplicationSuccess) {
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+        <div className="bg-white p-8 rounded-lg shadow-lg max-w-2xl w-full overflow-y-auto">
+          <h2 className="text-3xl font-bold text-indigo-900 mb-4">
+            Application Submitted
+          </h2>
+          <p className="mb-6">{data}</p>
+          <div className="flex justify-end">
+            <button
+              className="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-500"
+              onClick={onClose}
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const { job_comparison, recommendation } = data;
+  const job1 = job_comparison?.job1 || {};
+  const job2 = job_comparison?.job2 || {};
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+      <div className="bg-white p-8 rounded-lg shadow-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+        <h2 className="text-3xl font-bold text-indigo-900 mb-4">
+          Comparison Results
+        </h2>
+
+        <div className="mb-6">
+          <h3 className="text-2xl font-semibold text-indigo-800 mb-2">Job 1</h3>
+          <p className="mb-2">
+            <strong>Key Qualifications and Experience:</strong>{" "}
+            {job1.key_qualifications_and_experience || "N/A"}
+          </p>
+          <p className="mb-2">
+            <strong>Potential Gaps or Areas for Exploration:</strong>{" "}
+            {job1.potential_gaps_or_areas_for_exploration || "N/A"}
+          </p>
+          <p className="mb-2">
+            <strong>Summary:</strong> {job1.summary || "N/A"}
+          </p>
+        </div>
+
+        <div className="mb-6">
+          <h3 className="text-2xl font-semibold text-indigo-800 mb-2">Job 2</h3>
+          <p className="mb-2">
+            <strong>Key Qualifications and Experience:</strong>{" "}
+            {job2.key_qualifications_and_experience || "N/A"}
+          </p>
+          <p className="mb-2">
+            <strong>Potential Gaps or Areas for Exploration:</strong>{" "}
+            {job2.potential_gaps_or_areas_for_exploration || "N/A"}
+          </p>
+          <p className="mb-2">
+            <strong>Summary:</strong> {job2.summary || "N/A"}
+          </p>
+        </div>
+
+        <div className="mb-6">
+          <h3 className="text-2xl font-semibold text-indigo-800 mb-2">
+            Recommendation
+          </h3>
+          <p className="mb-2">
+            <strong>Better Fit:</strong> {recommendation?.better_fit || "N/A"}
+          </p>
+          <p className="mb-2">
+            <strong>Reason:</strong> {recommendation?.reason || "N/A"}
+          </p>
+        </div>
+
+        <div className="flex justify-end">
+          <button
+            className="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-500"
+            onClick={onClose}
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 // Custom Button component
 const Button = ({ children, onClick, disabled, className }) => (
@@ -31,6 +123,7 @@ const Checkbox = ({ checked, onChange, disabled }) => (
   </label>
 );
 
+// Main InternshipFetch Component
 const InternshipFetch = () => {
   const [internships, setInternships] = useState([]);
   const [selectedInternship, setSelectedInternship] = useState(null);
@@ -38,7 +131,6 @@ const InternshipFetch = () => {
   const [isCompareMode, setIsCompareMode] = useState(false);
   const [selectedForCompare, setSelectedForCompare] = useState([]);
   const [showCompareModal, setShowCompareModal] = useState(false);
-  const [resumeFile, setResumeFile] = useState(null);
   const [responseData, setResponseData] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccessModal, setIsSuccessModal] = useState(false);
@@ -74,6 +166,7 @@ const InternshipFetch = () => {
   };
 
   const handleClose = () => {
+    console.log("Closing SuccessModal"); // Debug log
     setIsSuccessModal(false);
     setResponseData(null);
   };
@@ -218,19 +311,19 @@ const InternshipFetch = () => {
                   onChange={() => handleCompareSelect(internship)}
                   disabled={
                     selectedForCompare.length === 2 &&
-                    !selectedForCompare.some((i) => i.id === internship.id)
+                    !selectedForCompare.find((i) => i.id === internship.id)
                   }
                 />
               </div>
             )}
-            <h3 className="text-4xl font-semibold text-indigo-800 mb-2">
+            <h2 className="text-2xl font-semibold text-indigo-900 mb-2">
               {internship.title}
-            </h3>
-            <p className="text-gray-700 mb-5 text-xl">
+            </h2>
+            <p className="text-indigo-700 mb-2">
               <strong>Company:</strong> {internship.companyName}
             </p>
-            <p className="text-indigo-500 text-lg font-semibold">
-              <strong>Stipend offered:</strong> {internship.salary}
+            <p className="text-indigo-700">
+              <strong>Duration:</strong> {internship.duration}
             </p>
           </div>
         ))}
@@ -238,8 +331,8 @@ const InternshipFetch = () => {
 
       {isModalOpen && selectedInternship && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-          <div className="bg-white p-8 rounded-lg shadow-lg max-w-md w-full">
-            <h2 className="text-4xl font-bold text-indigo-900 mb-4">
+          <div className="bg-white p-8 rounded-lg shadow-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <h2 className="text-3xl font-bold text-indigo-900 mb-4">
               {selectedInternship.title}
             </h2>
             <p className="mb-2"><strong>Company:</strong> {selectedInternship.companyName}</p>
@@ -277,6 +370,9 @@ const InternshipFetch = () => {
           data={responseData}
         />
       )}
+      
+      {/* Debug section */}
+      
     </div>
   );
 };
