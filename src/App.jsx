@@ -3,7 +3,6 @@ import { useState } from "react";
 import "./App.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Login from "./components/Login.jsx";
-import BookList from "./components/BookList.jsx";
 import UploadNotes from "./components/UploadNotes.jsx";
 import UploadListing from "./components/UploadListing.jsx";
 import AddAssignmentForm from "./components/AddAssignmentForm.jsx";
@@ -25,6 +24,8 @@ import TeacherDashboard from "./components/TeacherDashboard.jsx";
 
 import AppliedToInternship from "./components/AppliedToInternship.jsx";
 import BookLendingPage from "./components/BookLendingPage.jsx";
+import Sidebar from "./components/Sidebar.jsx";
+import { Roadmap } from "./components/Roadmap.jsx";
 
 // Error Boundary Component
 class ErrorBoundary extends React.Component {
@@ -59,13 +60,14 @@ function App() {
         <Sidebar className="sidebar" />
         <Routes>
           <Route path="/" element={<Login />} />
+          <Route path="/student-dashboard" element={<Dashboard />} />
+          <Route path="/teacher-dashboard" element={<TeacherDashboard />} />
           <Route path="/hr" element={<VideoPlayer />} />
           <Route path="/add-assignment" element={<AddAssignmentForm />} />
           <Route
             path="/assignment-submission"
             element={<AssignmentSubmission />}
           />
-          <Route path="/book-list" element={<BookList />} />
           <Route path="/borrowed-books" element={<BorrowedBooksPage />} />
           <Route path="/calendar" element={<Calendar />} />
           <Route path="/coding-platform" element={<CodingPlatform />} />
@@ -76,6 +78,7 @@ function App() {
           {/* <Route path="/rooms" element={<Rooms />} /> */}
           <Route path="/plagiarism-checker" element={<PlagiarismChecker />} />
           <Route path="/skills" element={<Skills />} />
+          <Route path="/roadmap" element={<Roadmap />} />
           <Route
             path="/teacher-assignment-view"
             element={<TeacherAssignmentView />}
