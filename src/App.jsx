@@ -19,8 +19,8 @@ import TeacherDashboard from "./components/TeacherDashboard.jsx";
 import Sidebar from "./components/Sidebar.jsx";
 import { Roadmap } from "./components/Roadmap.jsx";
 import VideoPlayer from "./components/VideoPlayer.jsx";
-import BookLendingPage from "./components/BookLendingPage"
-import AppliedToInternship from "./components/AppliedToInternship"
+import BookLendingPage from "./components/BookLendingPage";
+import AppliedToInternship from "./components/AppliedToInternship";
 
 // Error Boundary Component
 class ErrorBoundary extends React.Component {
@@ -46,29 +46,36 @@ class ErrorBoundary extends React.Component {
   }
 }
 
-const role = localStorage.getItem("selectedRole");
-
 function App() {
+  const role = localStorage.getItem("userRole");
+
   return (
     <div className="maindiv flex flex-row" style={{ width: "100%" }}>
       <Router>
-        {/* Conditionally render Sidebar if a role exists */}
         {role && <Sidebar className="sidebar" />}
         <Routes>
           <Route
             path="/"
             element={
-              role === 'student' ? <Dashboard />
-              : role === 'teacher' ? <TeacherDashboard />
-              : role === 'librarian' ? <BorrowedBooksPage />
-              : <Login />
+              role === "Student" ? (
+                <Dashboard />
+              ) : role === "Teacher" ? (
+                <TeacherDashboard />
+              ) : role === "Librarian" ? (
+                <BorrowedBooksPage />
+              ) : (
+                <Login />
+              )
             }
           />
           <Route path="/student-dashboard" element={<Dashboard />} />
           <Route path="/teacher-dashboard" element={<TeacherDashboard />} />
           <Route path="/hr" element={<VideoPlayer />} />
           <Route path="/add-assignment" element={<AddAssignmentForm />} />
-          <Route path="/assignment-submission" element={<AssignmentSubmission />} />
+          <Route
+            path="/assignment-submission"
+            element={<AssignmentSubmission />}
+          />
           <Route path="/borrowed-books" element={<BorrowedBooksPage />} />
           <Route path="/calendar" element={<Calendar />} />
           <Route path="/coding-platform" element={<CodingPlatform />} />
@@ -79,12 +86,17 @@ function App() {
           <Route path="/plagiarism-checker" element={<PlagiarismChecker />} />
           <Route path="/skills" element={<Skills />} />
           <Route path="/roadmap" element={<Roadmap />} />
-          <Route path="/teacher-assignment-view" element={<TeacherAssignmentView />} />
+          <Route
+            path="/teacher-assignment-view"
+            element={<TeacherAssignmentView />}
+          />
           <Route path="/upload-notes" element={<UploadNotes />} />
           <Route path="/upload-listing" element={<UploadListing />} />
-          <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/apply-internship" element={<InternshipFetch />} />
-          <Route path="/applied-to-internship" element={<AppliedToInternship />} />
+          <Route
+            path="/applied-to-internship"
+            element={<AppliedToInternship />}
+          />
         </Routes>
       </Router>
     </div>
