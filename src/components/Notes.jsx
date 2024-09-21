@@ -23,7 +23,7 @@ const Notes = () => {
   };
 
   return (
-    <div className="p-6">
+    <div className="p-6 w-[100%]">
       <h1 className="text-2xl font-semibold mb-4">Student Notes</h1>
       <div className="overflow-x-auto rounded-t-xl border border-gray-300 ">
         <table className="min-w-full shadow-md">

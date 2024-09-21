@@ -151,7 +151,7 @@ const BookList = () => {
   };
 
   return (
-    <div className="container mx-auto mt-8">
+    <div className="container mx-auto mt-8 w-[100%]">
       <h1 className="text-2xl font-bold text-center mb-6 text-gray-800">
         Library Books
       </h1>

@@ -51,9 +51,12 @@ class ErrorBoundary extends React.Component {
 }
 
 function App() {
+  const isStudent = true; // Change this to false for teacher routes
+
   return (
-    <Router>
-      <ErrorBoundary>
+    <div className="maindiv flex flex-row" style={{ width: "100%" }}>
+      <Router>
+        <Sidebar className="sidebar" />
         <Routes>
           <Route path="/" element={<Login />} />
           <Route path="/hr" element={<VideoPlayer />} />
@@ -88,8 +91,8 @@ function App() {
             element={<AppliedToInternship />}
           />
         </Routes>
-      </ErrorBoundary>
-    </Router>
+      </Router>
+    </div>
   );
 }
 

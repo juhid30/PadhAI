@@ -91,7 +91,7 @@ const Output = ({ editorRef, language, isDSAMode, isDebugMode }) => {
 
   return (
     <Box w="100%" className="cursor-default">
-      <Text mb={2} fontSize="lg">
+      <Text mb={2} fontSize="lg" className="lkj text-white">
         Output
       </Text>
       <Button

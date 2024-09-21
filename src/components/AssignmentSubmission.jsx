@@ -192,7 +192,7 @@ const AssignmentSubmission = () => {
   };
 
   return (
-    <div className="p-6 bg-neutral-100 rounded-lg shadow-md">
+    <div className="p-6 bg-neutral-100 rounded-lg shadow-md w-[100%]">
       
 
       {/* Pending Assignments */}

@@ -1,0 +1,31 @@
+.dashboard-page {
+    max-width: 1200px;
+  }
+  
+  .overview-section {
+    margin-bottom: 2rem;
+  }
+  
+  .card {
+    padding: 1.5rem;
+    background-color: #f9fafb;
+  }
+  
+  h2 {
+    margin-bottom: 0.5rem;
+  }
+  
+  .btn {
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .btn:hover {
+    background-color: #0056b3;
+  }
+  
+  .coding-practice-section, .interview-prep-section, .exam-scheduler {
+    margin-bottom: 2rem;
+  }
+  
+  
